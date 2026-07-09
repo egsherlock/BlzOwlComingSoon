@@ -1,0 +1,1465 @@
+---
+// coming-soon — variant 13: "Manifesto → Monolith" (the 3 + 4 MERGE, 2026-07-08).
+//
+// Owner directive: "4 opens → into 3". One continuous composition in two zones:
+//   ZONE 1 — the Ticker Manifesto (CsV4): kinetic positioning lines cycle with
+//            masked per-line reveals + stanza cadence; a live countdown rides the
+//            top-right corner.
+//   ZONE 2 — the Monolith Tease (CsV3): a small brass-edged prism turns slowly on
+//            a dark stage, "The new site lands 24.07." headline + a plain-spoken
+//            top-tier-London-studio positioning, the open-for-business mailto as
+//            the closing move (round-3 copy: impactful, friendly, no decode-metaphors).
+//
+// THE SEAM (one page, not two stacked): the manifesto's LAST stanza gestures
+// downward ("The first cut is / turning into view. / Come and see.") and hands
+// off into the descent; the prism is a DISCOVERED object — it rises + resolves as
+// zone 2 enters (view-timeline reveal), so you arrive to find it, never delivered
+// to a finished slide. ONE STAGE LIGHT (round-2 polish): a single soft radial
+// (.csm-light) straddles the zone boundary — centred ON the seam, its upper half
+// washing the manifesto's foot, its lower half lighting the monolith's stage —
+// replacing round 1's two clashing per-zone gradients. On fine pointers the light
+// drifts subtly toward the cursor (lerped, §7 Pointer Field restraint), and
+// clicking the hello@ mailto makes it swell/brighten for a beat — a small
+// "we're open" reinforcement. RM/touch keep the static composed light.
+//   (round 4: the light box no longer clips — it spans the whole composition and
+//   the radial fades to nothing at both true page ends, so there is no hard cut
+//   at top or bottom; the grain plane is radially masked so its box edges never
+//   read as a line. round 5: ALL of the light's overflow is caught by .csm's
+//   overflow:clip — both axes — because the unclipped transformed box was adding
+//   dead scroll below zone 2 on desktop, wrecking the settled bottom.)
+//
+// SCROLL DRIVES THE STORY IN ZONE 2 (round-2 polish): the whole monolith zone is
+// choreographed on a named view-timeline (--csmz2, scrubbed by scroll, pure CSS —
+// no JS, portable): the prism's orbit wrapper turns ~150° as you traverse into the
+// zone (composing with — never fighting — the 26s idle turn nested inside it), the
+// floor line draws in, and the content arrives as MASKED, STAGGERED lifts (each
+// line rises out of a clip mask in sequence — wordmark → eyebrow → title → lede →
+// datum → contact → CTA), all tied to progress, none on-load. The auto-descent
+// therefore doubles as the entrance choreography: the 2.2s carry scrubs the whole
+// arrival. Where animation-timeline is unsupported (round 4: some mobile engines,
+// notably Safari), a JS rAF scrub reads the monolith's rect on passive scroll and
+// drives the SAME choreography (identical scroll-driven orbit on every browser) —
+// feature-detected, CSS path stays where supported; round 5 smooths that path
+// through a lerped one-pole follower (~150ms) so coarse touch-scroll events read
+// butter-fluid, with the 26s idle turn composing inside the scrubbed orbit just
+// like desktop. HARD GUARANTEE (round 5): every scrubbed reveal completes at or
+// safely before maximum scroll on every viewport (all ranges end ≤42%; the seam
+// runway is MOBILE-ONLY; nothing may extend scroll past the monolith's end).
+// The "Come and see" cue is gently sticky (round 5): it follows the reader a
+// short way toward zone 2 inside a bounded track, releasing at the monolith's
+// top edge — always before the prism — then fades as zone 2 takes the screen.
+// Under RM everything is simply visible, static (cue static in place).
+//
+// BRANDING (round-2 polish): no chrome in zone 1 (the manifesto speaks alone); the
+// CANONICAL BlazingOwl wordmark (the nav logo geometry, inlined per the surface's
+// portability convention — own gradient id, no shared deps) leads zone 2's
+// entrance cascade.
+//
+// TWO PATHS DOWN (both graceful):
+//   (a) AUTO — when the manifesto completes its first full pass while the reader is
+//       idle, a slow, unhurried programmatic descent (~2.2s easeOut) carries you to
+//       the monolith. It is NEVER a scroll-jack mid-reading: it only fires after the
+//       last stanza has been read, only from the top, and it YIELDS instantly to any
+//       genuine scroll intent (wheel / touch / key / pointer) — the user always wins.
+//   (b) MANUAL — you can simply scroll down into the monolith at any moment.
+//
+// ONE CLOCK, NO DUPLICATES: the live T-minus lives ONLY in the top-right corner
+// (zone-1 register). The instant you enter the monolith zone that corner clock
+// hides, and zone 2 carries its own "24.07" date register instead — never two
+// clocks on screen. (Progress/zone/descent state are exposed as data-csm-* attrs
+// for headless verification; they are inert design metadata otherwise.)
+//
+// SELF-CONTAINED / PORTABLE (the surface convention — the winner ports to a fresh
+// standalone repo). The port must carry: Bricolage + Manrope + Geist Mono fonts;
+// the Molten Brass tokens (--color-* + rgb triplets, --font-*, --text-*, --ease-*,
+// --radius-surface). The CSS-3D prism carries over verbatim from CsV3's
+// zero-dependency choice (no WebGL, no runtime deps) so it survives the move
+// untouched. No email endpoint (the contact affordance is a mailto).
+//
+// FLOORS: RM-safe (prefers-reduced-motion → no cycling, no prism turn, NO
+// auto-descent; the page is a STATIC COMPOSED PAGE with BOTH zones visible, the
+// first stanza revealed, the prism parked three-quarter-on). No-JS-safe (both zones
+// are static DOM stacked in flow and reachable by scroll; the first stanza shows;
+// the corner clock degrades to the printed launch date). Mobile-first at 390px.
+//
+// ── STANDALONE PORT (blazingowl.co.uk holding page, 2026-07-09) ──────────────
+// Verbatim CsV13 body/style/script, wrapped in a full public document. The four
+// variable fonts + the Molten Brass token subset (src/styles/global.css) are the
+// only carried deps. Differences from the lab copy: this is the REAL public page
+// — indexed (no noindex), full <title>/description/OG, lang en-GB.
+
+// Self-hosted variable fonts (registers the "* Variable" @font-face families the
+// --font-* tokens point at; same set as the main repo's Base.astro).
+import '@fontsource-variable/inter'
+import '@fontsource-variable/manrope'
+import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource-variable/geist-mono'
+import '../styles/global.css'
+
+const title = 'BlazingOwl — London digital design studio'
+const description =
+	"We're a top-tier London digital design studio — remaking our site to showcase our work and recent projects."
+const canonical = 'https://blazingowl.co.uk/'
+const ogImage = 'https://blazingowl.co.uk/og-image.jpg'
+
+const statements = [
+	['A London studio', 'for brands that', 'refuse the generic.'],
+	['Small enough to care,', 'sharp enough', 'to make it count.'],
+	['Design that earns awe —', 'then proves it', 'in the numbers.'],
+	['The studio is open —', 'the new site', 'is nearly here.'],
+]
+const target = '2026-07-24T17:00:00+01:00'
+---
+
+<!doctype html>
+<html lang="en-GB">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=5"
+		/>
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonical} />
+		<meta name="theme-color" content="#0A0A0A" />
+		<meta name="msapplication-TileColor" content="#0A0A0A" />
+		<meta
+			name="robots"
+			content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+		/>
+
+		<!-- Icons -->
+		<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+
+		<!-- Open Graph -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:site_name" content="BlazingOwl" />
+		<meta property="og:locale" content="en_GB" />
+
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:creator" content="@blazingowl" />
+	</head>
+	<body>
+		<div
+	class="cs csm"
+	data-cs-page
+	data-csm
+	data-csm-zone="1"
+	data-csm-descent="idle"
+	data-csm-progress="0"
+	data-csm-cycle="0"
+	aria-label="BlazingOwl — launching soon"
+>
+	{
+		/* ---- Fixed page chrome — the corner clock only (owner: zone 1 carries no
+		   brand mark; the wordmark belongs to zone 2's entrance). ---------------- */
+	}
+	{/* The live countdown — the ONLY clock. Zone-1 register; hides in zone 2. */}
+	<p class="csm-clock" data-cs-countdown data-cs-target={target}>
+		<span class="csm-clock-static">Launching 24.07.2026</span>
+		<span class="csm-clock-live" aria-hidden="true">
+			Launch <b data-unit="days">14</b>d
+			<b data-unit="hours">00</b>h
+			<b data-unit="minutes">00</b>m
+			<b data-unit="seconds">00</b>s
+		</span>
+	</p>
+
+	{
+		/* ===== ZONE 1 — the Ticker Manifesto (CsV4 language) ==================== */
+	}
+	<section class="csm-zone csm-manifesto" aria-label="Studio manifesto">
+		<div class="csm-stage" data-csm-ticker>
+			{
+				statements.map((lines, i) => (
+					<p
+						class:list={['csm-stmt', { 'is-in': i === 0 }]}
+						data-stmt={i}
+						aria-hidden={i === 0 ? undefined : 'true'}
+					>
+						{lines.map((line) => (
+							<span class="csm-line">
+								<span class="csm-line-ink">{line}</span>
+							</span>
+						))}
+					</p>
+				))
+			}
+			{/* Reserve height so cycling never reflows the stage (tallest stanza). */}
+			<p class="csm-stmt csm-ghost" aria-hidden="true">
+				{
+					statements[0].map((line) => (
+						<span class="csm-line">
+							<span class="csm-line-ink">{line}</span>
+						</span>
+					))
+				}
+			</p>
+		</div>
+	</section>
+
+	{
+		/* THE SEAM RUNWAY + CUE TRACK (round 5). The track's top overlaps up into
+		   the manifesto's foot (negative margin), so the "Come and see" cue still
+		   sits in the first viewport where it always did; its lower reach is the
+		   seam runway — breathing scroll distance before the monolith arrives,
+		   MOBILE-ONLY (owner round 5: the desktop runway regressed the settled
+		   bottom; desktop net height is exactly zero). Inside it the cue is gently
+		   STICKY: it follows the viewer down the page a short way as they scroll
+		   toward zone 2, then releases at the track's end — geometrically BEFORE
+		   the prism (the track ends at the monolith's top edge, the prism sits
+		   below the zone's top padding) — and fades as zone 2 takes over. RM keeps
+		   the cue static in place. The auto-descent reads the monolith's live
+		   rect, so it simply carries you across whatever span the track adds. */
+	}
+	<div class="csm-cue-track" aria-hidden="true">
+		<div class="csm-cue">
+			<span class="csm-cue-line"></span>
+			<span class="csm-cue-label">Come and see</span>
+			<span class="csm-cue-chev"></span>
+		</div>
+	</div>
+
+	{/* ===== ZONE 2 — the Monolith Tease (CsV3 language) ===================== */}
+	<section class="csm-zone csm-monolith" aria-labelledby="csm-mo-title">
+		{/* Marks the seam crossing for the zone flip (top of the monolith). */}
+		<span class="csm-seam" aria-hidden="true"></span>
+
+		{
+			/* THE ONE STAGE LIGHT — a single radial straddling the seam (its centre
+			   sits exactly on the zone boundary): the upper half washes the
+			   manifesto's foot, the lower half lights the monolith. Pointer-follow
+			   (--lx/--ly, lerped by JS on fine pointers) + the mailto swell live on
+			   the core; .csm's overflow:clip keeps it from widening OR lengthening
+			   the page (round 5). */
+		}
+		<div class="csm-light" aria-hidden="true">
+			<span class="csm-light-core"></span>
+			{
+				/* A faint feTurbulence grain (round-3 de-banding): a static, tiled
+				   SVG-noise plane in soft-light at ~3% breaks up the concentric
+				   bands the radial leaves on similar-intensity dark surfaces. Pure
+				   image — zero per-frame cost. */
+			}
+			<span class="csm-dither"></span>
+		</div>
+
+		<div class="csm-stage3d" aria-hidden="true">
+			{
+				/* The stage line is the prism's OWN ground line (owner round 3): it
+				   lives INSIDE the stage3d box so it tracks the prism's base at every
+				   viewport, with the flex gap holding a clamped distance to the
+				   wordmark below — no more drifting low on mobile / crowding the
+				   wordmark on large desktop. */
+			}
+			<div class="csm-floor" aria-hidden="true"></div>
+			{
+				/* The orbit wrapper is the SCROLL-driven turn (~150° across the zone's
+				   view-timeline); the prism's own 26s idle turn nests inside it, so
+				   the two rotations compose instead of fighting. */
+			}
+			<div class="csm-orbit">
+				<div class="csm-prism">
+					<span class="csm-face csm-face-front"></span>
+					<span class="csm-face csm-face-right"></span>
+					<span class="csm-face csm-face-back"></span>
+					<span class="csm-face csm-face-left"></span>
+					<span class="csm-face csm-cap csm-cap-top"></span>
+					<span class="csm-face csm-cap csm-cap-bottom"></span>
+				</div>
+			</div>
+		</div>
+
+		{
+			/* The content cascade — each .csm-rev is a clip mask whose child lifts
+			   in on the zone's scrubbed view-timeline, staggered in document order:
+			   wordmark → eyebrow → title → lede → datum → contact → CTA. */
+		}
+		<div class="csm-inner">
+			<div class="csm-rev csm-rev-1">
+				<p class="csm-wordmark">
+					{
+						/* The canonical BlazingOwl wordmark (nav logo geometry), inlined
+					    for portability — own gradient id, no shared deps. */
+					}
+					<svg
+						viewBox="0 0 309.99 64.39"
+						xmlns="http://www.w3.org/2000/svg"
+						role="img"
+						aria-label="BlazingOwl"
+					>
+						<defs>
+							<linearGradient id="csm-wm-g" x1="0%" y1="0%" x2="100%" y2="0%">
+								<stop offset="0%" style="stop-color: var(--color-primary-light)"></stop>
+								<stop offset="100%" style="stop-color: var(--color-secondary-light)"
+								></stop>
+							</linearGradient>
+						</defs>
+						<g>
+							<path
+								class="wm-a"
+								d="M185.45,64.3c-2.34-.22-3.95-.68-6.21-1.78-3.27-1.58-5.55-3.77-7.53-7.13-1.64-2.81-1.64-3.21-.08-3.91,1.1-.48,4.43-.9,4.79-.6.16.12.62.82,1.04,1.54,1.04,1.8,2.73,3.31,4.75,4.27,1.9.9,3.23,1.22,5.11,1.22,2.99,0,5.59-1.08,7.65-3.19,2.06-2.08,2.81-3.81,3.11-7.21l.14-1.66-1.06.8c-1.64,1.22-3.51,2.16-5.49,2.77-1.6.48-2.12.54-4.71.54s-3.11-.06-4.67-.52c-5.79-1.76-9.74-5.63-11.58-11.34-1.1-3.47-1.1-7.71.02-11.06,2.48-7.47,9.24-12.12,17.03-11.74,3.45.16,7.41,1.72,9.48,3.71l.74.72v-1.24c0-1.64.38-2.38,1.28-2.54.38-.08,1.64-.1,2.81-.06,1.58.04,2.18.14,2.42.38.28.28.32,2.06.3,16.29,0,10.02-.08,16.49-.2,17.31-1.44,9.2-9.62,15.37-19.14,14.45h0ZM189.84,43.08c2.1-.54,3.37-1.26,4.95-2.85,4.23-4.21,4.21-10.9-.04-15.23-5.71-5.85-15.95-3.01-17.83,4.95-.42,1.82-.3,4.41.3,6.17.88,2.58,2.06,4.17,4.19,5.57,2.54,1.66,5.47,2.14,8.44,1.38h0Z"
+							></path>
+							<path
+								class="wm-a"
+								d="M16.23,49.86c-2.87-.22-5.51-1.24-7.96-3.03-1.34-1-1.46-.96-1.46.46,0,1.54-1.12,2.18-3.95,2.2-1.36,0-2.2-.24-2.58-.76-.22-.28-.26-4.93-.28-24.13C0,1.06,0,.8.4.4.76.04,1.06,0,3.19,0,5.43,0,5.63.04,6.15.48l.56.48.06,9.46.06,9.44,1.1-.98c1.3-1.18,3.81-2.44,5.99-3.09,1.3-.36,2.08-.44,4.21-.44,3.01,0,4.29.28,6.87,1.5,4.59,2.12,7.47,5.47,9.18,10.6.54,1.6.56,1.88.56,5.21s-.04,3.65-.54,5.27c-.66,2.14-1.4,3.65-2.58,5.25-3.67,4.95-8.86,7.19-15.39,6.67h0ZM20.54,42.96c3.23-.82,5.89-3.27,7.05-6.43.6-1.64.82-4.43.48-6.09-.54-2.6-2.18-5.13-4.29-6.61-4.33-3.03-10.2-2.46-13.77,1.36-3.25,3.47-3.87,7.88-1.76,12.28,1.32,2.73,3.69,4.71,6.59,5.49,1.44.4,4.23.4,5.69,0Z"
+							></path>
+							<path
+								class="wm-a"
+								d="M64.22,49.9c-7.19-1.12-12.76-6.39-14.21-13.47-.4-1.92-.42-5.31-.02-7.11.78-3.73,2.16-6.33,4.71-8.9,3.51-3.51,7.15-5.03,12.12-5.01,3.59,0,7.03,1.16,9.82,3.29l1.2.9.1-1.5c.14-2.14.34-2.26,3.39-2.26,2.65.02,2.97.14,3.25,1.34.1.42.18,7.57.18,15.91,0,15.09,0,15.15-.42,15.69l-.42.54-2.6-.06c-2.6-.06-2.63-.06-3.03-.62-.3-.38-.44-.94-.5-1.84l-.08-1.3-1.12,1c-1.32,1.18-3.75,2.42-5.85,3.01-1.74.48-4.79.66-6.51.4h0ZM69.39,43.18c5.03-1.06,8.36-5.19,8.36-10.36,0-3.75-1.52-6.75-4.51-8.88-2.02-1.44-3.75-1.98-6.31-2-2.28,0-3.55.3-5.21,1.26-2.12,1.22-4.09,3.67-4.83,6.03-.62,2-.58,5.09.08,6.99.96,2.77,2.81,4.89,5.27,6.05,2.36,1.14,4.69,1.42,7.15.9h0Z"
+							></path>
+							<path
+								class="wm-b"
+								d="M222.63,49.59c-6.73-1.36-12.34-6.91-13.71-13.57-.46-2.22-.42-5.31.1-7.39.4-1.58,1.8-4.85,2.42-5.65.26-.36.3-.36.76.02.28.2,1.8,1.26,3.41,2.34s2.95,1.98,2.99,2.02c.04.02-.1.46-.28.96-.52,1.36-.36,4.07.34,5.59,1.46,3.13,5.45,5.23,8.7,4.59,3.87-.78,6.59-3.81,6.83-7.57.06-1.1,0-1.88-.22-2.58-.16-.54-.24-1.04-.14-1.1.08-.06,1.14-.72,2.34-1.48,1.2-.76,2.73-1.78,3.37-2.28,1.14-.88,1.18-.9,1.46-.52.6.78,1.64,3.05,2.14,4.67,3.03,9.6-3.21,19.86-13.35,21.94-1.84.38-5.33.4-7.17.02h0Z"
+							></path>
+							<path
+								class="wm-a"
+								d="M90.85,49.19c-1.1-.46-1.28-.94-1.28-3.37,0-1.72.08-2.3.38-2.91.4-.76,2.44-3.17,12.02-14.05,3.05-3.45,5.57-6.35,5.59-6.45.04-.1-3.53-.18-8.26-.18h-8.32l-.56-.48c-.54-.46-.56-.58-.62-2.58-.08-1.98-.06-2.1.42-2.67l.5-.58,12.06-.06c8.18-.04,12.3.02,12.84.16.64.18.88.36,1.1.9.28.7.38,3.35.16,4.47q-.16.76-9.7,11.56c-1.94,2.2-4.75,5.37-6.19,7.01l-2.67,3.01,8.94.1c8.22.1,8.96.12,9.28.46.28.28.38.76.42,2.26.08,2.08-.14,2.95-.84,3.35-.64.38-24.43.42-25.29.04h0Z"
+							></path>
+							<path
+								class="wm-a"
+								d="M124.04,49.35c-.76-.06-1.24-.22-1.54-.5l-.46-.42v-31.78l.52-.4c.46-.36.82-.42,2.58-.42,2.34,0,3.17.22,3.49.92.16.36.22,4.79.22,15.83,0,16.11,0,16.23-.86,16.57-.44.16-2.77.28-3.95.2Z"
+							></path>
+							<path
+								class="wm-a"
+								d="M39.28,48.89c-.4-.4-.4-.66-.4-24.15V.98l.5-.48C39.84.02,39.98,0,42.16,0s2.34.04,2.87.48l.56.48.06,23.71.04,23.69-.44.48c-.4.44-.56.46-3.01.46-2.3,0-2.6-.04-2.97-.4h0Z"
+							></path>
+							<path
+								class="wm-a"
+								d="M134.98,48.83l-.44-.44v-15.91l.02-15.89.48-.38c.38-.32.8-.38,2.3-.38,2.04,0,3.05.22,3.45.74.16.22.26.88.28,1.6v1.26l1.26-1.02c5.21-4.23,12.64-4.25,18.15-.04,2.69,2.06,4.51,4.85,5.45,8.38.42,1.54.44,2,.46,11.58l.02,10-.56.48c-.52.44-.72.48-2.87.48-2.36,0-2.91-.12-3.21-.74-.1-.2-.22-4.83-.28-10.28-.1-9.84-.1-9.92-.58-11.08-2.79-6.93-12.96-7.09-16.31-.26-1.06,2.14-1.14,3.05-1.14,12.48v8.64l-.52.62-.52.62h-2.48c-2.34,0-2.52-.04-2.97-.46h0Z"
+							></path>
+							<path
+								class="wm-b"
+								d="M256.19,48.85c-.42-.38-.82-1.4-2.02-5.27-.82-2.65-3.03-9.48-4.91-15.17-1.86-5.71-3.39-10.62-3.39-10.92s.12-.7.26-.88c.52-.68,1.08-.78,4.55-.78,4.03,0,4.15.06,4.59,2.1.38,1.78,2.73,10.7,3.93,14.93.58,2.04,1.18,4.21,1.34,4.81.18.66.36.98.42.8.08-.16.54-1.96,1.04-4.01.76-3.03,3.03-11.54,4.43-16.61.16-.58.52-1.28.78-1.54.48-.48.54-.48,4.29-.48s3.81,0,4.41.52c.44.36.74.9,1.02,1.84.5,1.7,3.69,13.35,4.83,17.61.48,1.78.94,3.19,1,3.11.08-.08.32-1,.56-2.04.22-1.04,1.26-5.41,2.3-9.72,1.04-4.29,2-8.36,2.14-9.02.18-.8.44-1.38.8-1.74l.54-.56h3.35c3.65,0,4.39.18,4.63,1.1.12.48-.56,3.05-2.32,8.72-.44,1.38-2.04,6.75-3.61,11.92-1.54,5.19-2.95,9.8-3.13,10.26-.52,1.4-.72,1.46-5.33,1.46-4.93,0-4.67.14-5.67-3.11-3.09-9.9-4.25-13.73-4.79-15.67-.34-1.24-.66-2.26-.72-2.26-.12,0-3.57,11.98-4.83,16.81-.82,3.09-1.12,3.75-1.9,4.03-.28.12-2.2.2-4.29.2-3.63,0-3.81-.02-4.31-.44h0Z"
+							></path>
+							<path
+								class="wm-b"
+								d="M301.84,48.81l-.56-.48v-6.59c0-3.61.02-14.27.06-23.67l.04-17.09.5-.48c.48-.5.54-.5,3.81-.5s3.33,0,3.81.5l.5.48v47.49l-.52.4c-.5.38-.8.42-3.81.42-3.17,0-3.29-.02-3.83-.48h0Z"
+							></path>
+							<path
+								class="wm-b"
+								d="M225.87,31.04c-1.98-3.67-3.77-5.35-10.66-10.12-2.79-1.92-4.81-3.79-5.85-5.37-.42-.66-.76-1.24-.76-1.34,0-.08.44.02.98.24,1.38.52,4.55,1.12,7.03,1.36,1.64.14,2.44.12,3.61-.1,2.42-.46,7.15-.58,9.92-.26,4.39.5,9.22.16,12.38-.9.74-.24,1.34-.42,1.34-.38s-.38.64-.84,1.32c-1.42,2.12-3.43,3.93-6.87,6.21-5.21,3.45-7.19,5.33-8.9,8.44-.48.84-.9,1.52-.94,1.52-.06,0-.26-.28-.44-.62h0Z"
+							></path>
+							<path
+								class="wm-a"
+								d="M122.68,12.83c-.52-.44-.89-1.14-1.04-2.01-.26-1.41.15-2.58,1.57-4.54.41-.58.91-1.37,1.1-1.78.32-.67.35-.84.34-1.82,0-.78-.07-1.26-.24-1.73-.27-.79-.2-.82.72-.23,1.29.84,2.31,2.08,3.12,3.82,1.25,2.67,1.42,5.18.49,7.09-.48.98-1.6,2.01-1.35,1.25.28-.85.1-2.5-.41-3.71-.23-.52-1.35-2.28-1.46-2.28-.03,0-.06.48-.06,1.06-.01.86-.06,1.14-.26,1.53-.34.64-.72.66-1.02.06l-.22-.42-.35.74c-.49,1.02-.67,2.16-.44,2.8.2.58.06.64-.48.18h0Z"
+							></path>
+						</g>
+					</svg>
+				</p>
+			</div>
+			<div class="csm-rev csm-rev-2">
+				<p class="csm-eyebrow">
+					<span class="csm-eyebrow-loc">London ·</span>
+					<span class="csm-eyebrow-role">
+						<span class="csm-jewel" aria-hidden="true"></span>
+						<span>Digital design studio</span>
+					</span>
+				</p>
+			</div>
+			<div class="csm-rev csm-rev-3">
+				<h1 id="csm-mo-title" class="csm-title">The new site lands 24.07.</h1>
+			</div>
+			<div class="csm-rev csm-rev-4">
+				<p class="csm-lede">
+					We're a top-tier London digital design studio — remaking our site to
+					showcase our work and recent projects.
+				</p>
+			</div>
+			<div class="csm-rev csm-rev-5">
+				<p class="csm-datum">
+					Launch · <time datetime="2026-07-24">24.07.2026</time>
+				</p>
+			</div>
+			<div class="csm-rev csm-rev-6">
+				<p class="csm-contact">
+					The studio isn't waiting — we're open and taking on new projects right now.
+				</p>
+			</div>
+			<div class="csm-rev csm-rev-7">
+				<p class="csm-cta">
+					<a href="mailto:hello@blazingowl.co.uk"
+						>Tell us about yours — hello@blazingowl.co.uk</a
+					>
+				</p>
+			</div>
+		</div>
+	</section>
+</div>
+
+<style>
+	.csm {
+		position: relative;
+		width: 100%;
+		background: var(--color-background);
+		color: var(--color-foreground);
+		isolation: isolate;
+		/* Clip BOTH axes (round 5). Horizontal: the oversized / pointer-drifting
+		   light core never widens the page. Vertical — THE round-5 desktop-bottom
+		   fix: the 260svh light box is transformed (translateY(-50%)) and
+		   transformed bounds COUNT toward the page's scrollable overflow, so on
+		   desktops (monolith ≈ 100svh < the light's 130svh lower half) it silently
+		   added ~30–40svh of DEAD SCROLL below zone 2 — "absolute bottom" pushed
+		   the monolith's upper text off-screen with a black void beneath.
+		   overflow:clip removes that contribution; the visual cut lands where the
+		   radial is ≥77% of its radius (≈0.1% alpha — invisible, pixel-verified).
+		   clip (not hidden) creates NO scroll container, so the sticky cue and
+		   the fixed clock keep working. */
+		overflow: clip;
+	}
+
+	/* ---- Fixed chrome: the corner clock only (no zone-1 brand mark) --------- */
+	.csm-clock {
+		position: fixed;
+		top: clamp(1.25rem, 3.5vw, 2.25rem);
+		right: clamp(1.25rem, 4vw, 3rem);
+		z-index: 5;
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: var(--text-xsmall);
+		text-transform: uppercase;
+		letter-spacing: 0.14em;
+		color: var(--color-faint);
+		font-variant-numeric: tabular-nums;
+		text-align: right;
+		/* Hidden the moment we cross into the monolith zone — one clock only. */
+		transition:
+			opacity 0.5s var(--ease-fade),
+			transform 0.5s var(--ease-fade),
+			visibility 0s linear 0s;
+	}
+	.csm[data-csm-zone='2'] .csm-clock {
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-0.5rem);
+		transition:
+			opacity 0.45s var(--ease-fade),
+			transform 0.45s var(--ease-fade),
+			visibility 0s linear 0.45s;
+	}
+	.csm-clock-live {
+		display: none;
+	}
+	.csm-clock-live b {
+		color: var(--color-primary-light);
+		font-weight: 500;
+		margin: 0 0.1em 0 0.4em;
+	}
+	.csm-clock[data-live='1'] .csm-clock-live {
+		display: inline;
+	}
+	.csm-clock[data-live='1'] .csm-clock-static {
+		display: none;
+	}
+
+	.csm-jewel {
+		width: 8px;
+		height: 8px;
+		flex: none;
+		border-radius: 50%;
+		background: radial-gradient(
+			circle at 35% 30%,
+			var(--color-primary-light),
+			var(--color-primary) 60%
+		);
+		box-shadow: 0 0 10px rgb(var(--color-primary-light-rgb) / 0.7);
+	}
+
+	/* ---- Shared zone frame ------------------------------------------------- */
+	.csm-zone {
+		position: relative;
+		min-height: 100svh;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		isolation: isolate;
+	}
+
+	/* ===== ZONE 1 — manifesto ============================================== */
+	.csm-manifesto {
+		justify-content: center;
+		padding: clamp(5.5rem, 14vh, 9rem) clamp(1.75rem, 4vw, 3rem)
+			clamp(4rem, 10vh, 6rem);
+	}
+	.csm-stage {
+		position: relative;
+		flex: 1 1 auto;
+		display: grid;
+		align-content: center;
+	}
+	.csm-stmt {
+		grid-area: 1 / 1;
+		margin: 0;
+		max-width: 20ch;
+		font-family: var(--font-primary);
+		font-weight: 600;
+		font-size: clamp(2.25rem, 8vw, 6rem);
+		line-height: 1.02;
+		letter-spacing: -0.045em;
+		color: var(--color-foreground);
+	}
+	.csm-ghost {
+		visibility: hidden;
+		position: relative;
+	}
+	.csm-stmt:not(.csm-ghost) {
+		position: absolute;
+		inset: 0 auto auto 0;
+	}
+	.csm-line {
+		display: block;
+		overflow: hidden;
+		padding-bottom: 0.04em;
+	}
+	.csm-line:last-child .csm-line-ink {
+		background: linear-gradient(
+			100deg,
+			var(--color-primary-light),
+			var(--color-secondary)
+		);
+		-webkit-background-clip: text;
+		background-clip: text;
+		-webkit-text-fill-color: transparent;
+	}
+	.csm-line-ink {
+		display: inline-block;
+		will-change: transform;
+	}
+
+	/* Default (hidden / RM / no-JS non-first): ink sits below its mask. The
+	   FIRST stanza is revealed by .is-in, so no-JS shows it in place. */
+	.csm-stmt:not(.is-in) {
+		opacity: 0;
+		visibility: hidden;
+	}
+	.csm-stmt:not(.is-in) .csm-line-ink {
+		transform: translateY(110%);
+	}
+	.csm-stmt.is-in {
+		opacity: 1;
+		visibility: visible;
+	}
+	.csm-stmt.is-in .csm-line-ink {
+		transform: translateY(0);
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.csm-stmt {
+			transition:
+				opacity 0.5s var(--ease-fade),
+				visibility 0s linear 0.6s;
+		}
+		.csm-stmt .csm-line-ink {
+			transition: transform 0.7s var(--ease-mask);
+		}
+		.csm-stmt.is-in {
+			transition: opacity 0.5s var(--ease-fade);
+		}
+		.csm-stmt.is-in .csm-line:nth-child(1) .csm-line-ink {
+			transition-delay: 0.04s;
+		}
+		.csm-stmt.is-in .csm-line:nth-child(2) .csm-line-ink {
+			transition-delay: 0.13s;
+		}
+		.csm-stmt.is-in .csm-line:nth-child(3) .csm-line-ink {
+			transition-delay: 0.22s;
+		}
+		/* Leaving: the whole stanza lifts up and out (word-morph exit). */
+		.csm-stmt.is-out .csm-line-ink {
+			transform: translateY(-110%);
+			transition: transform 0.6s var(--ease-mask);
+		}
+		.csm-stmt.is-out {
+			opacity: 0;
+			visibility: visible;
+			transition: opacity 0.55s var(--ease-fade);
+		}
+	}
+
+	/* ---- The handoff cue + its track (seam runway) -------------------------
+	   The track top is pulled 26svh up into the manifesto's foot (negative
+	   margin), so the cue's in-flow position matches its round-1–4 spot at the
+	   base of the first viewport. Net page height added by the track:
+	     mobile  = the 46svh seam runway (owner round 4),
+	     desktop = ZERO (owner round 5 — settled bottom identical to pre-runway).
+	   The cue is position:sticky within the track (motion only): it holds near
+	   the viewport's foot while the reader scrolls toward zone 2, releases when
+	   the track ends (= the monolith's top edge — always above the prism, which
+	   sits below the zone's top padding; overlap is geometrically impossible),
+	   and fades once zone 2 owns the screen. */
+	.csm-cue-track {
+		--cue-overlap: 26svh;
+		--cue-runway: 46svh;
+		position: relative;
+		height: calc(var(--cue-overlap) + var(--cue-runway));
+		margin-top: calc(-1 * var(--cue-overlap));
+		pointer-events: none;
+	}
+	@media (min-width: 768px) {
+		.csm-cue-track {
+			--cue-runway: 0svh;
+		}
+	}
+	.csm-cue {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.7rem;
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.csm-cue {
+			position: sticky;
+			/* Sticks exactly at its natural first-viewport position (track top =
+			   100svh − overlap when the manifesto is min-height-bound), so there
+			   is no jump on load — it simply starts following. */
+			top: calc(100svh - var(--cue-overlap));
+			transition: opacity 0.5s var(--ease-fade);
+		}
+		/* Gone before the prism's moment: fade as zone 2 takes the screen. */
+		.csm[data-csm-zone='2'] .csm-cue {
+			opacity: 0;
+		}
+	}
+	.csm-cue-label {
+		font-family: var(--font-mono);
+		font-size: var(--text-xsmall);
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: var(--color-faint);
+	}
+	.csm-cue-line {
+		width: 1px;
+		height: clamp(1.75rem, 4vh, 2.75rem);
+		background: linear-gradient(
+			180deg,
+			transparent,
+			rgb(var(--color-primary-rgb) / 0.5)
+		);
+	}
+	.csm-cue-chev {
+		width: 9px;
+		height: 9px;
+		border-right: 1px solid rgb(var(--color-primary-rgb) / 0.7);
+		border-bottom: 1px solid rgb(var(--color-primary-rgb) / 0.7);
+		transform: rotate(45deg);
+		margin-top: -0.35rem;
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.csm-cue-chev {
+			animation: csm-nudge 2.4s var(--ease-fade) infinite;
+		}
+	}
+	@keyframes csm-nudge {
+		0%,
+		100% {
+			transform: rotate(45deg) translate(-2px, -2px);
+			opacity: 0.5;
+		}
+		50% {
+			transform: rotate(45deg) translate(1px, 1px);
+			opacity: 1;
+		}
+	}
+
+	/* ===== ZONE 2 — monolith =============================================== */
+	.csm-monolith {
+		align-items: center;
+		justify-content: center;
+		gap: clamp(2rem, 6vh, 4rem);
+		padding: clamp(4.5rem, 11vh, 8rem) clamp(1.25rem, 5vw, 3rem);
+		/* No per-zone gradients — the ONE stage light (.csm-light) carries all
+		   the ambience across the seam. */
+	}
+	.csm-seam {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 1px;
+		height: 1px;
+	}
+
+	/* ---- THE ONE STAGE LIGHT — centred on the seam, half in each zone ------ */
+	.csm-light {
+		position: absolute;
+		left: 0;
+		right: 0;
+		/* Centre the box on the seam (monolith top), but let it reach far past
+		   both zone ends so the radial's fade — not a box edge — is what you see
+		   at the top and bottom of the page. The old 150svh box + overflow:clip
+		   sliced the glow (and the dither rectangle) mid-page → the visible cut.
+		   This box never clips; ALL its overflow (both axes) is caught by .csm
+		   root's overflow:clip, whose edges sit where the radial is already
+		   invisible — and which stops the box's transformed bounds from adding
+		   dead scroll below the page (the round-5 desktop regression). */
+		top: 0;
+		height: 260svh;
+		transform: translateY(-50%);
+		overflow: visible;
+		pointer-events: none;
+		z-index: -2;
+		transition: transform 0.9s var(--ease-settle);
+	}
+	.csm-light-core {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		width: min(120rem, 170vw);
+		height: 100%;
+		transform: translate(
+			calc(-50% + var(--lx, 0px)),
+			calc(-50% + var(--ly, 0px))
+		);
+		/* Perceptually-eased stops (round-3 de-banding): a denser, smoothly
+		   decaying alpha ramp instead of three hard stops — the falloff reads
+		   continuous, so the concentric banding steps disappear. */
+		background: radial-gradient(
+			50% 50% at 50% 50%,
+			rgb(var(--color-primary-rgb) / 0.12) 0%,
+			rgb(var(--color-primary-rgb) / 0.104) 12%,
+			rgb(var(--color-primary-rgb) / 0.086) 24%,
+			rgb(var(--color-primary-rgb) / 0.062) 38%,
+			rgb(var(--color-primary-rgb) / 0.038) 52%,
+			rgb(var(--color-primary-rgb) / 0.018) 64%,
+			transparent 78%
+		);
+		opacity: 0.85;
+		transition:
+			opacity 0.9s var(--ease-settle),
+			filter 0.9s var(--ease-settle);
+	}
+	/* The dither plane — fills the light box, tiled SVG grain, soft-light @ ~3%.
+	   overflow:clip on .csm-light keeps it contained; it is purely static. */
+	.csm-dither {
+		position: absolute;
+		inset: 0;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+		background-size: 140px 140px;
+		background-repeat: repeat;
+		mix-blend-mode: soft-light;
+		opacity: 0.03;
+		/* Fade the grain plane out radially so its rectangular box edges (now the
+		   box is unclipped and taller than a phone) never read as a hard line —
+		   it only shows where the light itself lives. */
+		-webkit-mask-image: radial-gradient(
+			55% 42% at 50% 50%,
+			#000 45%,
+			transparent 82%
+		);
+		mask-image: radial-gradient(55% 42% at 50% 50%, #000 45%, transparent 82%);
+	}
+	/* Hover intensify on the mailto (round-3): a subtler lift than the click
+	   swell — fine pointers WITH hover only, never under reduced motion, so
+	   RM/touch keep the static composed light. Zero per-frame cost. Placed
+	   BEFORE the swell rules so a click still wins over a hover. */
+	@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+		.csm:has(.csm-cta a:hover) .csm-light-core {
+			opacity: 1;
+			filter: brightness(1.16) saturate(1.04);
+		}
+	}
+	/* The mailto swell — clicking hello@ makes the light breathe up for a beat
+	   (a small "we're open" reinforcement), then settle back. */
+	.csm[data-csm-swell='1'] .csm-light {
+		transform: translateY(-50%) scale(1.07);
+	}
+	.csm[data-csm-swell='1'] .csm-light-core {
+		opacity: 1;
+		filter: brightness(1.35) saturate(1.08);
+	}
+	/* The stage line, anchored to the prism's base (round-3): centred on the
+	   stage3d box (whose 50% aligns with the zone centre) and sitting at the
+	   prism's ground, so it tracks the prism instead of a fixed % of the zone.
+	   Width breaks out past the prism to read as its ground line / shadow. */
+	.csm-floor {
+		position: absolute;
+		left: 50%;
+		bottom: clamp(-0.5rem, -1vh, 0.25rem);
+		width: min(30rem, 70vw);
+		height: 1px;
+		transform: translateX(-50%);
+		background: linear-gradient(
+			90deg,
+			transparent,
+			rgb(var(--color-primary-rgb) / 0.35),
+			transparent
+		);
+		box-shadow: 0 0 40px 8px rgb(var(--color-primary-rgb) / 0.12);
+		z-index: -1;
+	}
+
+	/* ---- The CSS-3D prism (carried over verbatim from CsV3) ---------------- */
+	.csm-stage3d {
+		--w: clamp(6.5rem, 20vw, 10rem);
+		--h: clamp(12rem, 38vw, 18rem);
+		--hw: calc(var(--w) / 2);
+		position: relative;
+		width: var(--w);
+		height: var(--h);
+		perspective: 1400px;
+		perspective-origin: 50% 42%;
+	}
+	.csm-prism {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		transform-style: preserve-3d;
+		transform: rotateX(-14deg) rotateY(-32deg);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.csm-prism {
+			animation: csm-turn 26s linear infinite;
+		}
+	}
+	@keyframes csm-turn {
+		to {
+			transform: rotateX(-14deg) rotateY(328deg);
+		}
+	}
+	.csm-face {
+		position: absolute;
+		inset: 0;
+		border: 1px solid rgb(var(--color-primary-rgb) / 0.55);
+		box-shadow:
+			inset 0 0 30px rgb(var(--color-primary-rgb) / 0.15),
+			inset 0 1px 0 rgb(var(--color-primary-light-rgb) / 0.25);
+		backface-visibility: hidden;
+	}
+	/* The distinct top tone per face is the depth cue the owner likes (round 3):
+	   it is PRESERVED. Only the LOWER body is pulled to opaque #0a0a0a earlier
+	   (~56–64%) so the stage line can never read through the prism's base. */
+	.csm-face-front {
+		transform: translateZ(var(--hw));
+		background: linear-gradient(
+			155deg,
+			rgb(var(--color-primary-rgb) / 0.32),
+			rgb(var(--color-primary-dark-rgb) / 0.16) 40%,
+			#0a0a0a 62%
+		);
+	}
+	.csm-face-right {
+		transform: rotateY(90deg) translateZ(var(--hw));
+		background: linear-gradient(
+			155deg,
+			rgb(var(--aurora-a-rgb) / 0.3),
+			rgb(var(--color-primary-dark-rgb) / 0.14) 42%,
+			#0a0a0a 64%
+		);
+	}
+	.csm-face-back {
+		transform: rotateY(180deg) translateZ(var(--hw));
+		background: linear-gradient(
+			155deg,
+			rgb(var(--color-primary-rgb) / 0.24),
+			#0a0a0a 56%
+		);
+	}
+	.csm-face-left {
+		transform: rotateY(270deg) translateZ(var(--hw));
+		background: linear-gradient(
+			155deg,
+			rgb(var(--aurora-b-rgb) / 0.26),
+			#0a0a0a 58%
+		);
+	}
+	.csm-cap {
+		height: var(--w);
+		background: radial-gradient(
+			circle at 40% 35%,
+			rgb(var(--color-primary-light-rgb) / 0.4),
+			rgb(var(--color-primary-dark-rgb) / 0.12) 60%,
+			#0a0a0a
+		);
+	}
+	.csm-cap-top {
+		transform: rotateX(90deg) translateZ(var(--hw));
+	}
+	.csm-cap-bottom {
+		top: auto;
+		bottom: 0;
+		transform: rotateX(-90deg) translateZ(var(--hw));
+	}
+
+	/* The scroll-driven orbit wrapper (base: neutral; the turn lives in the
+	   gated block below so RM/no-support keep the prism parked). */
+	.csm-orbit {
+		width: 100%;
+		height: 100%;
+		transform-style: preserve-3d;
+	}
+
+	/* ---- ZONE 2's SCROLL-DRIVEN STORY --------------------------------------
+	   The whole zone publishes a named view-timeline (--csmz2); every arrival
+	   scrubs against it — pure CSS, no JS, portable. Zone 2 is min 100svh, so
+	   its cover progress at "settled" (zone filling the viewport) is ~50% —
+	   and the HARD GUARANTEE (owner round 5) is that every reveal reaches 100%
+	   at or safely before maximum scroll on EVERY viewport: worst case is a
+	   phone whose dynamic toolbar makes svh ≈ 0.85 × innerHeight, putting the
+	   settled cover progress near 44%, so ALL ranges end ≤42%. (.csm clips
+	   vertical overflow, so nothing — light included — can add scroll distance
+	   past the monolith's own end and break the settle point.)
+	     · the prism ORBITS ~150° into place (composing with the idle turn),
+	     · it rises + resolves as a discovered object,
+	     · the floor line draws in,
+	     · the content lifts out of clip masks in a staggered cascade.
+	   Where animation-timeline is unsupported (and under RM) everything below
+	   is skipped — the zone is simply visible, static. ---------------------- */
+	@media (prefers-reduced-motion: no-preference) {
+		@supports (animation-timeline: view()) {
+			/* All CSS-timeline rules are gated on :not(.csm-scrub-js): when the JS
+			   fallback takes over (view-timeline unsupported, or forced for test),
+			   it stamps .csm-scrub-js on the root, turning these off so JS's inline
+			   transforms are the single source of truth — no CSS-vs-JS conflict. */
+			.csm:not(.csm-scrub-js) .csm-monolith {
+				view-timeline: --csmz2 block;
+			}
+			.csm:not(.csm-scrub-js) .csm-orbit {
+				animation: csm-orbit linear both;
+				animation-timeline: --csmz2;
+				animation-range: cover 0% cover 42%;
+			}
+			.csm:not(.csm-scrub-js) .csm-stage3d {
+				animation: csm-rise linear both;
+				animation-timeline: --csmz2;
+				animation-range: cover 2% cover 30%;
+			}
+			.csm:not(.csm-scrub-js) .csm-floor {
+				animation: csm-floor-draw linear both;
+				animation-timeline: --csmz2;
+				animation-range: cover 8% cover 34%;
+			}
+			/* The clip masks + lifts (§7 masked reveals — never bare fades). */
+			.csm-rev {
+				clip-path: inset(-0.3em -0.3em -0.1em -0.3em);
+			}
+			.csm:not(.csm-scrub-js) .csm-rev > * {
+				animation: csm-lift linear both;
+				animation-timeline: --csmz2;
+			}
+			/* ⚠ The per-rev ranges MUST carry the same .csm:not(.csm-scrub-js)
+			   prefix as the shorthand rule above: the `animation` SHORTHAND resets
+			   animation-range to `normal`, so if these were lower-specificity the
+			   reset would win and every lift would run cover 0→100% — freezing all
+			   the zone-2 text at 65% inside its mask at the settled bottom (the
+			   round-5 owner screenshot; introduced by round 4's rescope). */
+			.csm:not(.csm-scrub-js) .csm-rev-1 > * {
+				animation-range: cover 14% cover 25%;
+			}
+			.csm:not(.csm-scrub-js) .csm-rev-2 > * {
+				animation-range: cover 17% cover 28%;
+			}
+			.csm:not(.csm-scrub-js) .csm-rev-3 > * {
+				animation-range: cover 20% cover 31%;
+			}
+			.csm:not(.csm-scrub-js) .csm-rev-4 > * {
+				animation-range: cover 23% cover 34%;
+			}
+			.csm:not(.csm-scrub-js) .csm-rev-5 > * {
+				animation-range: cover 26% cover 36%;
+			}
+			.csm:not(.csm-scrub-js) .csm-rev-6 > * {
+				animation-range: cover 29% cover 39%;
+			}
+			.csm:not(.csm-scrub-js) .csm-rev-7 > * {
+				animation-range: cover 32% cover 42%;
+			}
+			@keyframes csm-orbit {
+				from {
+					transform: rotateX(7deg) rotateY(-150deg);
+				}
+				to {
+					transform: rotateX(0deg) rotateY(0deg);
+				}
+			}
+			@keyframes csm-rise {
+				from {
+					opacity: 0;
+					transform: translateY(9vh) scale(0.9);
+				}
+				to {
+					opacity: 1;
+					transform: translateY(0) scale(1);
+				}
+			}
+			@keyframes csm-floor-draw {
+				from {
+					transform: translateX(-50%) scaleX(0);
+				}
+				to {
+					transform: translateX(-50%) scaleX(1);
+				}
+			}
+			@keyframes csm-lift {
+				from {
+					transform: translateY(130%);
+				}
+				to {
+					transform: translateY(0);
+				}
+			}
+		}
+	}
+
+	/* ---- Zone-2 content --------------------------------------------------- */
+	.csm-inner {
+		position: relative;
+		width: 100%;
+		max-width: 40rem;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	/* The canonical wordmark — leads the entrance cascade. */
+	.csm-wordmark {
+		margin: 0 0 clamp(1.1rem, 2.5vw, 1.6rem);
+	}
+	.csm-wordmark svg {
+		display: block;
+		width: clamp(8.75rem, 26vw, 12rem);
+		height: auto;
+	}
+	.csm-wordmark .wm-a {
+		fill: url(#csm-wm-g);
+	}
+	.csm-wordmark .wm-b {
+		fill: var(--color-foreground);
+	}
+	.csm-eyebrow {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.35em 0.7em;
+		margin: 0 0 clamp(1rem, 2.5vw, 1.5rem);
+		font-family: var(--font-mono);
+		font-size: var(--text-xsmall);
+		letter-spacing: 0.24em;
+		text-transform: uppercase;
+		color: var(--color-subtle);
+	}
+	/* The jewel belongs to the studio designation (owner round 3): it rides
+	   INSIDE the role unit, hugging "Digital design studio" — not the location. */
+	.csm-eyebrow-role {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.55em;
+	}
+	.csm-eyebrow-loc {
+		color: var(--color-faint);
+	}
+	.csm-title {
+		margin: 0;
+		font-family: var(--font-primary);
+		font-weight: 600;
+		font-size: var(--text-headline);
+		line-height: 1.05;
+		letter-spacing: -0.04em;
+		color: var(--color-foreground);
+		text-wrap: balance;
+	}
+	.csm-lede {
+		margin: clamp(0.85rem, 2vw, 1.25rem) 0 0;
+		max-width: 36ch;
+		font-family: var(--font-body);
+		font-size: var(--text-body);
+		line-height: 1.6;
+		color: var(--color-muted);
+		text-wrap: balance;
+	}
+	.csm-datum {
+		margin: clamp(1.5rem, 3.5vw, 2.25rem) 0 0;
+		font-family: var(--font-mono);
+		font-size: var(--text-annotation);
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-primary-light);
+		font-variant-numeric: tabular-nums;
+	}
+	.csm-contact {
+		margin: clamp(1.25rem, 3vw, 1.75rem) 0 0;
+		max-width: 44ch;
+		font-family: var(--font-body);
+		font-size: var(--text-annotation);
+		line-height: 1.55;
+		color: var(--color-subtle);
+		text-wrap: balance;
+	}
+	.csm-cta {
+		margin: clamp(0.6rem, 1.5vw, 0.9rem) 0 0;
+		font-family: var(--font-body);
+		font-size: var(--text-body);
+		line-height: 1.5;
+	}
+	.csm-cta a {
+		color: var(--color-primary-light);
+		text-decoration: none;
+		border-bottom: 1px solid rgb(var(--color-primary-rgb) / 0.35);
+		transition: border-color 0.3s var(--ease-fade);
+	}
+	.csm-cta a:hover {
+		border-color: var(--color-primary-light);
+	}
+
+	/* ---- Mobile (≤430px): tuck the clock tighter to the corner ------------ */
+	@media (max-width: 430px) {
+		.csm-clock {
+			top: clamp(1rem, 3.5vw, 1.5rem);
+		}
+	}
+</style>
+
+<script>
+	// ── Merged coming-soon: manifesto (zone 1) → monolith (zone 2). ─────────
+	const root = document.querySelector<HTMLElement>('[data-csm]')
+	if (root) {
+		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+		const allowMotion = !reduce
+
+		// --- The one live clock (top-right corner) --------------------------
+		const clock = root.querySelector<HTMLElement>('[data-cs-countdown]')
+		if (clock) {
+			const t = new Date(
+				clock.dataset.csTarget ?? '2026-07-24T17:00:00+01:00'
+			).getTime()
+			const set = (unit: string, val: number) => {
+				const el = clock.querySelector<HTMLElement>(`[data-unit="${unit}"]`)
+				if (el) el.textContent = String(val).padStart(2, '0')
+			}
+			const tick = () => {
+				const diff = Math.max(0, t - Date.now())
+				set('days', Math.floor(diff / 86400000))
+				set('hours', Math.floor((diff % 86400000) / 3600000))
+				set('minutes', Math.floor((diff % 3600000) / 60000))
+				set('seconds', Math.floor((diff % 60000) / 1000))
+			}
+			tick()
+			clock.dataset.live = '1'
+			window.setInterval(tick, 1000)
+		}
+
+		// --- The stage light follows the pointer (fine pointers, lerped) -----
+		// §7 Pointer Field restraint: the light's origin drifts a few rem toward
+		// the cursor through a rAF lerp (quickTo-class smoothing) — never 1:1.
+		// Touch and reduced-motion keep the static composed light.
+		const lightCore = root.querySelector<HTMLElement>('.csm-light-core')
+		const finePointer = window.matchMedia('(pointer: fine)').matches
+		if (lightCore && allowMotion && finePointer) {
+			let tx = 0
+			let ty = 0
+			let cx = 0
+			let cy = 0
+			let live = false
+			const step = () => {
+				cx += (tx - cx) * 0.07
+				cy += (ty - cy) * 0.07
+				lightCore.style.setProperty('--lx', cx.toFixed(2) + 'px')
+				lightCore.style.setProperty('--ly', cy.toFixed(2) + 'px')
+				if (Math.abs(tx - cx) + Math.abs(ty - cy) > 0.15) {
+					window.requestAnimationFrame(step)
+				} else {
+					live = false
+				}
+			}
+			window.addEventListener(
+				'pointermove',
+				(e) => {
+					tx = (e.clientX / window.innerWidth - 0.5) * 90
+					ty = (e.clientY / window.innerHeight - 0.5) * 64
+					if (!live) {
+						live = true
+						window.requestAnimationFrame(step)
+					}
+				},
+				{ passive: true }
+			)
+		}
+
+		// --- Clicking hello@ = the light swells for a beat ("we're open") ----
+		let swellT = 0
+		root.querySelectorAll<HTMLAnchorElement>('a[href^="mailto:"]').forEach((a) =>
+			a.addEventListener('click', () => {
+				if (!allowMotion) return
+				root.dataset.csmSwell = '1'
+				window.clearTimeout(swellT)
+				swellT = window.setTimeout(() => {
+					delete root.dataset.csmSwell
+				}, 1500)
+			})
+		)
+
+		// --- Zone flag: hide the corner clock once the monolith dominates ---
+		// Driven off the monolith's own rect (not the 'scroll' source), so it
+		// updates for BOTH user and programmatic (auto-descent) scrolling — the
+		// distinction that matters for descent-yielding lives in INTENT events
+		// (wheel/touch/key/pointer), never in the scroll event itself.
+		const monolith = root.querySelector<HTMLElement>('.csm-monolith')
+		if (monolith) {
+			let ticking = false
+			const syncZone = () => {
+				ticking = false
+				const inZone2 =
+					monolith.getBoundingClientRect().top <= window.innerHeight * 0.5
+				root.dataset.csmZone = inZone2 ? '2' : '1'
+			}
+			const onScroll = () => {
+				if (ticking) return
+				ticking = true
+				requestAnimationFrame(syncZone)
+			}
+			window.addEventListener('scroll', onScroll, { passive: true })
+			window.addEventListener('resize', onScroll)
+			syncZone()
+
+			// --- The choreographed descent + the manifesto cycler -----------
+			// Both are motion; RM keeps the static composed page (both zones
+			// visible, first stanza shown, no descent).
+			if (allowMotion) {
+				// --- Zone-2 story: JS scrub fallback where view-timeline is absent ---
+				// CSS animation-timeline: view() drives zone 2 where supported. Some
+				// mobile engines (notably Safari) lack it, so there the SAME
+				// choreography (orbit turn, rise, floor draw, staggered rev lifts)
+				// runs off scroll via JS — every browser gets the identical
+				// scroll-driven turn. ROUND 5: the raw per-event write read as
+				// steppy on phones (touch scroll events arrive coarse), so the
+				// progress now runs through a LERPED FOLLOWER (one-pole, ~150ms
+				// time-constant — the house smoothing pattern): scroll updates only
+				// the TARGET; a rAF loop eases current → target and writes the
+				// transforms, then parks itself when converged. The prism's 26s
+				// idle turn (CSS, on .csm-prism INSIDE the orbit wrapper) is
+				// untouched by this path and composes with the scrubbed orbit
+				// exactly as on the CSS path. Mobile-stick law: passive listeners,
+				// rect READS only (never scroll writes), transforms set inline off
+				// rAF. Forceable for test via ?csm-scrub=js.
+				const supportsVT =
+					!!window.CSS &&
+					typeof window.CSS.supports === 'function' &&
+					window.CSS.supports('animation-timeline: view()')
+				const forceJs =
+					new URLSearchParams(window.location.search).get('csm-scrub') === 'js'
+				if (!supportsVT || forceJs) {
+					root.classList.add('csm-scrub-js')
+					const orbit = root.querySelector<HTMLElement>('.csm-orbit')
+					const stage3d = root.querySelector<HTMLElement>('.csm-stage3d')
+					const floorEl = root.querySelector<HTMLElement>('.csm-floor')
+					const revs = Array.from(root.querySelectorAll<HTMLElement>('.csm-rev'))
+					// [from, to] cover fractions — mirror the CSS animation-range values
+					// (all ends ≤0.42, the round-5 completes-at-max-scroll guarantee).
+					const revRanges: [number, number][] = [
+						[0.14, 0.25],
+						[0.17, 0.28],
+						[0.2, 0.31],
+						[0.23, 0.34],
+						[0.26, 0.36],
+						[0.29, 0.39],
+						[0.32, 0.42],
+					]
+					const clamp01 = (x: number) => (x < 0 ? 0 : x > 1 ? 1 : x)
+					const sub = (p: number, a: number, b: number) => clamp01((p - a) / (b - a))
+					// Pre-arm the clip masks + from-poses so nothing flashes finished.
+					revs.forEach((r) => {
+						r.style.clipPath = 'inset(-0.3em -0.3em -0.1em -0.3em)'
+					})
+					const apply = (p: number) => {
+						root.style.setProperty('--z2p', p.toFixed(4))
+						if (orbit) {
+							const po = sub(p, 0, 0.42)
+							orbit.style.transform =
+								'rotateX(' +
+								(7 * (1 - po)).toFixed(2) +
+								'deg) rotateY(' +
+								(-150 * (1 - po)).toFixed(2) +
+								'deg)'
+						}
+						if (stage3d) {
+							const pr = sub(p, 0.02, 0.3)
+							stage3d.style.opacity = pr.toFixed(3)
+							stage3d.style.transform =
+								'translateY(' +
+								(9 * (1 - pr)).toFixed(2) +
+								'vh) scale(' +
+								(0.9 + 0.1 * pr).toFixed(3) +
+								')'
+						}
+						if (floorEl) {
+							const pf = sub(p, 0.08, 0.34)
+							floorEl.style.transform =
+								'translateX(-50%) scaleX(' + pf.toFixed(3) + ')'
+						}
+						revs.forEach((r, i) => {
+							const child = r.firstElementChild as HTMLElement | null
+							if (!child) return
+							const [a, b] = revRanges[i] ?? [0, 1]
+							const pl = sub(p, a, b)
+							child.style.transform =
+								'translateY(' + (130 * (1 - pl)).toFixed(2) + '%)'
+						})
+					}
+					// cover progress: 0 as the monolith top meets the viewport bottom,
+					// 1 as its bottom leaves the viewport top (matches CSS `cover`).
+					const readP = () => {
+						const rect = monolith.getBoundingClientRect()
+						const vh = window.innerHeight || 1
+						return clamp01((vh - rect.top) / (rect.height + vh))
+					}
+					// The follower: cur chases target with a ~150ms one-pole ease.
+					let target = readP()
+					let cur = target
+					apply(cur) // settle the on-load pose instantly — no lerp-in
+					let running = false
+					let lastT = 0
+					const TAU = 0.15
+					const follow = (now: number) => {
+						const dt = Math.min(0.1, (now - lastT) / 1000)
+						lastT = now
+						cur += (target - cur) * (1 - Math.exp(-dt / TAU))
+						if (Math.abs(target - cur) < 0.0004) {
+							cur = target
+							apply(cur)
+							running = false
+							return
+						}
+						apply(cur)
+						window.requestAnimationFrame(follow)
+					}
+					const wake = () => {
+						target = readP()
+						if (!running) {
+							running = true
+							lastT = performance.now()
+							window.requestAnimationFrame(follow)
+						}
+					}
+					window.addEventListener('scroll', wake, { passive: true })
+					window.addEventListener('resize', wake)
+				}
+
+				let userEngaged = false
+				let descentActive = false
+				let raf = 0
+
+				const cancelDescent = () => {
+					if (descentActive) {
+						descentActive = false
+						window.cancelAnimationFrame(raf)
+						root.dataset.csmDescent = 'yielded'
+					}
+				}
+				// Genuine scroll INTENT yields the auto-descent to the user and
+				// disarms it — the user always wins. Programmatic scrollTo never
+				// emits these, so the descent never cancels itself.
+				const onIntent = () => {
+					userEngaged = true
+					cancelDescent()
+				}
+				;(['wheel', 'touchstart', 'keydown', 'pointerdown'] as const).forEach(
+					(ev) => window.addEventListener(ev, onIntent, { passive: true })
+				)
+
+				const startDescent = () => {
+					if (userEngaged || descentActive) return
+					if (root.dataset.csmDescent !== 'idle') return
+					// Only from the top — never a scroll-jack mid-reading.
+					if (window.scrollY > window.innerHeight * 0.25) return
+					const startY = window.scrollY
+					const targetY = Math.round(
+						monolith.getBoundingClientRect().top + window.scrollY
+					)
+					const dist = targetY - startY
+					if (dist <= 2) {
+						root.dataset.csmDescent = 'done'
+						return
+					}
+					descentActive = true
+					root.dataset.csmDescent = 'running'
+					// Scale the carry with the (now longer, runway-extended) distance so
+					// the descent keeps its unhurried velocity instead of racing across
+					// the added seam. Floored at the original 2.2s, capped at 3.6s.
+					const dur = Math.round(Math.min(3600, Math.max(2200, dist * 2.2)))
+					const t0 = performance.now()
+					const ease = (p: number) => 1 - Math.pow(1 - p, 3) // easeOutCubic
+					const stepFrame = (now: number) => {
+						if (!descentActive) return
+						const p = Math.min(1, (now - t0) / dur)
+						root.dataset.csmProgress = p.toFixed(3)
+						window.scrollTo(0, startY + dist * ease(p))
+						if (p < 1) {
+							raf = window.requestAnimationFrame(stepFrame)
+						} else {
+							descentActive = false
+							root.dataset.csmDescent = 'done'
+						}
+					}
+					raf = window.requestAnimationFrame(stepFrame)
+				}
+
+				const stage = root.querySelector<HTMLElement>('[data-csm-ticker]')
+				const stmts = stage
+					? Array.from(
+							stage.querySelectorAll<HTMLElement>('.csm-stmt:not(.csm-ghost)')
+						)
+					: []
+
+				if (stmts.length > 1) {
+					let idx = 0
+					const DWELL = 3400
+					const OUT = 620
+					let timer = 0
+
+					const advance = () => {
+						// The manifesto has spoken its whole piece (last stanza read):
+						// if the reader is idle at the top, hand off into the descent
+						// and hold the closing line — the type carries you down.
+						if (
+							idx === stmts.length - 1 &&
+							!userEngaged &&
+							root.dataset.csmDescent === 'idle' &&
+							window.scrollY <= window.innerHeight * 0.25
+						) {
+							root.dataset.csmCycle = '1'
+							window.clearInterval(timer)
+							startDescent()
+							return
+						}
+						const cur = stmts[idx]
+						const next = stmts[(idx + 1) % stmts.length]
+						cur.classList.remove('is-in')
+						cur.classList.add('is-out')
+						cur.setAttribute('aria-hidden', 'true')
+						window.setTimeout(() => {
+							cur.classList.remove('is-out')
+							next.classList.add('is-in')
+							next.removeAttribute('aria-hidden')
+							idx = (idx + 1) % stmts.length
+							if (idx === 0)
+								root.dataset.csmCycle = String(Number(root.dataset.csmCycle || '0') + 1)
+						}, OUT)
+					}
+
+					timer = window.setInterval(advance, DWELL)
+					// Pause while hidden so stanzas don't stack up on return.
+					document.addEventListener('visibilitychange', () => {
+						window.clearInterval(timer)
+						if (!document.hidden) timer = window.setInterval(advance, DWELL)
+					})
+				}
+			}
+		}
+	}
+</script>
+	</body>
+</html>

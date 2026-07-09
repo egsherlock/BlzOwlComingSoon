@@ -1,0 +1,83 @@
+/* ============================================================================
+   BlazingOwl coming-soon — the Molten Brass token subset.
+   Ported verbatim from the main repo's src/styles/global.css (@theme + :root),
+   trimmed to exactly what CsV13 (this page) reads: the brass palette + rgb
+   triplets, the font-family wiring, the fluid type scale used on this surface,
+   the motion easings and the surface radius. Self-contained: no Tailwind, no
+   shared deps. The four variable fonts are imported in index.astro's frontmatter
+   (@fontsource-variable), which registers the "* Variable" @font-face families
+   the --font-* vars point at.
+   ============================================================================ */
+:root {
+	/* ---- Font families (Fontsource "* Variable" @font-face wired here) ---- */
+	--font-inter: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-manrope:
+		'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, sans-serif;
+	--font-bricolage-grotesque:
+		'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif,
+		system-ui, sans-serif;
+
+	--font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
+	--font-primary: var(--font-bricolage-grotesque), sans-serif;
+	--font-secondary: var(--font-manrope), sans-serif;
+	--font-body: var(--font-inter), sans-serif;
+
+	/* ---- Molten Brass palette ---- */
+	--color-background: #0a0a0a;
+	--color-foreground: #ffffff;
+	--color-muted: #d4d4d4;
+	--color-subtle: #a3a3a3;
+	--color-faint: #808080;
+
+	--color-primary: #b98a3e;
+	--color-primary-light: #e3c584;
+	--color-primary-dark: #8a6425;
+	--color-secondary: #a67c52;
+	--color-secondary-light: #d9b98a;
+
+	/* rgb triplets for rgb(var(--x) / a) alpha call-sites */
+	--color-primary-rgb: 185 138 62;
+	--color-primary-light-rgb: 227 197 132;
+	--color-primary-dark-rgb: 138 100 37;
+	--color-secondary-rgb: 166 124 82;
+	--color-secondary-light-rgb: 217 185 138;
+
+	/* aurora tint pair (prism face accents) */
+	--aurora-a-rgb: 255 156 64;
+	--aurora-b-rgb: 209 84 30;
+
+	/* ---- Fluid type scale (values used on this surface) ---- */
+	--text-headline: clamp(1.875rem, 0.77rem + 2.895vw, 4.75rem);
+	--text-body: min(
+		max(clamp(0.875rem, 2vw, 1rem), calc(0.645rem + 0.395vw)),
+		1.188rem
+	);
+	--text-annotation: clamp(0.781rem, 0.638rem + 0.263vw, 1rem);
+	--text-xsmall: clamp(0.6875rem, 1.25vw, 0.75rem);
+
+	/* ---- Motion easings (one kinetic voice, no bounce/elastic) ---- */
+	--ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-mask: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-travel: cubic-bezier(0.4, 0, 0.2, 1);
+	--ease-fade: cubic-bezier(0.33, 0, 0.2, 1);
+
+	--radius-surface: 12px;
+}
+
+/* ---- Page baseline ---- */
+* {
+	box-sizing: border-box;
+}
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+body {
+	margin: 0;
+	min-height: 100svh;
+	background: var(--color-background);
+	color: var(--color-foreground);
+	font-family: var(--font-body);
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}

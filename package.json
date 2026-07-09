@@ -1,0 +1,25 @@
+{
+	"name": "blazingowl-coming-soon",
+	"version": "1.0.0",
+	"description": "BlazingOwl coming-soon holding page (standalone Astro, Railway node standalone)",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"start": "node ./dist/server/entry.mjs",
+		"astro": "astro"
+	},
+	"dependencies": {
+		"@astrojs/node": "^10.1.4",
+		"@fontsource-variable/bricolage-grotesque": "^5.2.10",
+		"@fontsource-variable/geist-mono": "^5.2.8",
+		"@fontsource-variable/inter": "^5.2.8",
+		"@fontsource-variable/manrope": "^5.2.8",
+		"astro": "^6.4.5"
+	},
+	"engines": {
+		"node": ">=22.0.0"
+	}
+}

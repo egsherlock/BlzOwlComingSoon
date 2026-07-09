@@ -89,8 +89,12 @@
 // — indexed (no noindex), full <title>/description/OG, lang en-GB.
 
 // Self-hosted variable fonts (registers the "* Variable" @font-face families the
-// --font-* tokens point at; same set as the main repo's Base.astro).
-import '@fontsource-variable/inter'
+// --font-* tokens point at; SAME SET as the main repo's Base.astro — Manrope
+// (body) + Bricolage (display) + Geist Mono (annotation). Inter was NOT part of
+// the main site and was dropped here on 2026-07-09: the port had silently
+// switched --font-body to Inter, so the lede/contact/CTA rendered in a different
+// (softer-looking) typeface than the homepage. Body text is Manrope, matching
+// the main site + the source lab CsV13.
 import '@fontsource-variable/manrope'
 import '@fontsource-variable/bricolage-grotesque'
 import '@fontsource-variable/geist-mono'
@@ -1277,13 +1281,23 @@ const target = '2026-07-24T17:00:00+01:00'
 					const apply = (p: number) => {
 						root.style.setProperty('--z2p', p.toFixed(4))
 						if (orbit) {
-							const po = sub(p, 0, 0.42)
+							// CONTINUOUS turntable — mobile parity with desktop's always-live
+							// feel (fix 2026-07-09). The orbit rotation tracks scroll across the
+							// WHOLE reachable range and stays reversible from ANY position; it is
+							// NOT parked once the arrival completes. The old sub(p, 0, 0.42)
+							// clamped at 1, so past ~42% cover the prism stopped answering scroll
+							// (the "doesn't keep rotating on mobile" fault). `po` keeps the exact
+							// desktop arrival RATE (rotateY −150°→0° over cover 0→42%) but is only
+							// floored at 0, never capped at 1 — so scrolling on past the arrival
+							// keeps turning the prism and scrolling back up rewinds it. The value
+							// passed in is the smoothed `cur` from the one-pole follower below, so
+							// the coupling is fluid, not steppy; the prism's 26s CSS idle turn
+							// composes inside this wrapper exactly as it does on desktop.
+							const po = Math.max(0, p / 0.42)
+							const ax = 7 * (1 - Math.min(1, po))
+							const ay = -150 * (1 - po)
 							orbit.style.transform =
-								'rotateX(' +
-								(7 * (1 - po)).toFixed(2) +
-								'deg) rotateY(' +
-								(-150 * (1 - po)).toFixed(2) +
-								'deg)'
+								'rotateX(' + ax.toFixed(2) + 'deg) rotateY(' + ay.toFixed(2) + 'deg)'
 						}
 						if (stage3d) {
 							const pr = sub(p, 0.02, 0.3)
@@ -1311,10 +1325,15 @@ const target = '2026-07-24T17:00:00+01:00'
 					}
 					// cover progress: 0 as the monolith top meets the viewport bottom,
 					// 1 as its bottom leaves the viewport top (matches CSS `cover`).
+					// vhCache: viewport height, refreshed only on resize/orientation
+					// (2026-07-09). Reading window.innerHeight every scroll tick makes the
+					// mapping jitter on iOS Safari (the URL bar collapses mid-scroll and
+					// innerHeight wobbles frame-to-frame) — a source of the "jumpy" feel.
+					// rect.top stays the live scroll signal; vh is stable within a gesture.
+					let vhCache = window.innerHeight || 1
 					const readP = () => {
 						const rect = monolith.getBoundingClientRect()
-						const vh = window.innerHeight || 1
-						return clamp01((vh - rect.top) / (rect.height + vh))
+						return clamp01((vhCache - rect.top) / (rect.height + vhCache))
 					}
 					// The follower: cur chases target with a ~150ms one-pole ease.
 					let target = readP()
@@ -1345,7 +1364,12 @@ const target = '2026-07-24T17:00:00+01:00'
 						}
 					}
 					window.addEventListener('scroll', wake, { passive: true })
-					window.addEventListener('resize', wake)
+					const onViewportResize = () => {
+						vhCache = window.innerHeight || 1
+						wake()
+					}
+					window.addEventListener('resize', onViewportResize)
+					window.addEventListener('orientationchange', onViewportResize)
 				}
 
 				let userEngaged = false

@@ -9,8 +9,11 @@
    the --font-* vars point at.
    ============================================================================ */
 :root {
-	/* ---- Font families (Fontsource "* Variable" @font-face wired here) ---- */
-	--font-inter: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+	/* ---- Font families (Fontsource "* Variable" @font-face wired here) ----
+	   Mirrors the main repo's :root exactly: Manrope is the BODY face, Bricolage
+	   the display face, Geist Mono the annotation face. (Inter was removed
+	   2026-07-09 — the port had pointed --font-body at Inter, which the main site
+	   never uses, making the lede/contact/CTA render in a different typeface.) */
 	--font-manrope:
 		'Manrope Variable', 'Manrope', ui-sans-serif, system-ui, sans-serif;
 	--font-bricolage-grotesque:
@@ -20,7 +23,7 @@
 	--font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
 	--font-primary: var(--font-bricolage-grotesque), sans-serif;
 	--font-secondary: var(--font-manrope), sans-serif;
-	--font-body: var(--font-inter), sans-serif;
+	--font-body: var(--font-manrope), sans-serif;
 
 	/* ---- Molten Brass palette ---- */
 	--color-background: #0a0a0a;
@@ -78,6 +81,10 @@ body {
 	background: var(--color-background);
 	color: var(--color-foreground);
 	font-family: var(--font-body);
+	/* Font rendering optimizations — the SAME triad the main repo sets on <body>.
+	   grayscale was missing here, so on macOS Firefox this page fell back to
+	   subpixel AA (heavier, fringed) while the main site rendered grayscale. */
 	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
 }

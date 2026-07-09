@@ -528,7 +528,14 @@ const target = '2026-07-24T17:00:00+01:00'
 	.csm-line {
 		display: block;
 		overflow: hidden;
-		padding-bottom: 0.04em;
+		/* Descender headroom for the reveal mask (§3 The Clipped-Text Headroom
+		   Rule): pair the overflow clip with padding-bottom + a compensating
+		   negative margin so 'g/y/p/j' tails AND each stanza's end period/comma
+		   clear the cut, without changing the line rhythm (net 0). Proven
+		   pattern — HeroMerge .mh-slot 0.22/-0.22, PortfolioConvergence
+		   .pf11-thesis-shine 0.25. */
+		padding-bottom: 0.2em;
+		margin-bottom: -0.2em;
 	}
 	.csm-line:last-child .csm-line-ink {
 		background: linear-gradient(
@@ -539,10 +546,24 @@ const target = '2026-07-24T17:00:00+01:00'
 		-webkit-background-clip: text;
 		background-clip: text;
 		-webkit-text-fill-color: transparent;
+		/* Gradient PAINT-BOX headroom (round 6 — the "period/comma still clipped"
+		   bug): background-clip:text only paints ink INSIDE this element's box;
+		   with -0.045em tracking (trailing spacing narrows the box) + 1.02
+		   line-height, each stanza's end '.'/',' and 'g/y/p' tails land just
+		   OUTSIDE it → painted transparent. The .csm-line mask fix (0.2em) never
+		   touched THIS box. Extend the paintable box on every ink-overflow side
+		   and compensate with negative margins — net-zero rhythm, same rule
+		   family as §3 Clipped-Text Headroom. */
+		padding: 0.05em 0.18em 0.16em 0.08em;
+		margin: -0.05em -0.18em -0.16em -0.08em;
 	}
 	.csm-line-ink {
 		display: inline-block;
-		will-change: transform;
+		/* NO permanent will-change: the reveal is a ONE-SHOT transition, and a
+		   persistent composited layer renders the text with grayscale AA instead
+		   of crisp sub-pixel AA — the resting "blurry moving hero text" bug. The
+		   transform transition composites fine on its own; at rest the ink
+		   de-composites to crisp (§3 The Clipped-Text Headroom Rule). */
 	}
 
 	/* Default (hidden / RM / no-JS non-first): ink sits below its mask. The
@@ -552,7 +573,10 @@ const target = '2026-07-24T17:00:00+01:00'
 		visibility: hidden;
 	}
 	.csm-stmt:not(.is-in) .csm-line-ink {
-		transform: translateY(110%);
+		/* 130% (was 110%): the mask is now 0.2em taller (descender headroom
+		   above), so the ink needs a longer hide to start fully below the clip —
+		   otherwise its caps peek at the mask foot before the reveal. */
+		transform: translateY(130%);
 	}
 	.csm-stmt.is-in {
 		opacity: 1;
@@ -828,6 +852,15 @@ const target = '2026-07-24T17:00:00+01:00'
 		.csm-prism {
 			animation: csm-turn 26s linear infinite;
 		}
+	}
+	/* JS-scrub path (round 6): JS owns the prism's FULL yaw — the ambient
+	   26s-equivalent turn plus a scroll-velocity kick — because the CSS idle
+	   turn proved unreliable inside the per-frame-mutated orbit wrapper on
+	   mobile WebKit (owner-observed on device: the prism read as purely
+	   scroll-driven; desktop composes fine). One source of truth on that
+	   path, never a CSS/JS double-turn. */
+	.csm.csm-scrub-js .csm-prism {
+		animation: none;
 	}
 	@keyframes csm-turn {
 		to {
@@ -1243,10 +1276,10 @@ const target = '2026-07-24T17:00:00+01:00'
 				// progress now runs through a LERPED FOLLOWER (one-pole, ~150ms
 				// time-constant — the house smoothing pattern): scroll updates only
 				// the TARGET; a rAF loop eases current → target and writes the
-				// transforms, then parks itself when converged. The prism's 26s
-				// idle turn (CSS, on .csm-prism INSIDE the orbit wrapper) is
-				// untouched by this path and composes with the scrubbed orbit
-				// exactly as on the CSS path. Mobile-stick law: passive listeners,
+				// transforms. ROUND 6: on this path JS also owns the prism's yaw
+				// (ambient 360°/26s + a capped scroll-velocity kick — see the loop
+				// below); the loop is gated by an IntersectionObserver instead of
+				// parking on convergence. Mobile-stick law: passive listeners,
 				// rect READS only (never scroll writes), transforms set inline off
 				// rAF. Forceable for test via ?csm-scrub=js.
 				const supportsVT =
@@ -1291,8 +1324,9 @@ const target = '2026-07-24T17:00:00+01:00'
 							// floored at 0, never capped at 1 — so scrolling on past the arrival
 							// keeps turning the prism and scrolling back up rewinds it. The value
 							// passed in is the smoothed `cur` from the one-pole follower below, so
-							// the coupling is fluid, not steppy; the prism's 26s CSS idle turn
-							// composes inside this wrapper exactly as it does on desktop.
+							// the coupling is fluid, not steppy. (ROUND 6: the prism's yaw is
+							// JS-owned on this path — ambient + kick in the loop below — the
+							// CSS 26s idle turn is off via .csm-scrub-js.)
 							const po = Math.max(0, p / 0.42)
 							const ax = 7 * (1 - Math.min(1, po))
 							const ay = -150 * (1 - po)
@@ -1336,32 +1370,69 @@ const target = '2026-07-24T17:00:00+01:00'
 						return clamp01((vhCache - rect.top) / (rect.height + vhCache))
 					}
 					// The follower: cur chases target with a ~150ms one-pole ease.
+					// ROUND 6 — desktop-feel parity (owner: "it's purely scroll
+					// driven"): the CSS 26s idle turn on .csm-prism proved unreliable
+					// inside this per-frame-mutated orbit on mobile WebKit, so on THIS
+					// path JS owns the prism's full yaw (CSS animation off via
+					// .csm-scrub-js): an AMBIENT term at the exact desktop rate
+					// (360°/26s) accrues every frame, plus a modest scroll-velocity
+					// kick (capped) so a fling visibly quickens the spin — the same
+					// scrub + ambient composition desktop reads. The loop therefore no
+					// longer parks on convergence; instead an IntersectionObserver
+					// gates it to the monolith being on/near screen (battery: zero
+					// work while zone 2 is away; ambient resumes on approach).
+					const prism = root.querySelector<HTMLElement>('.csm-prism')
 					let target = readP()
 					let cur = target
 					apply(cur) // settle the on-load pose instantly — no lerp-in
-					let running = false
+					let rafId = 0
 					let lastT = 0
-					const TAU = 0.15
-					const follow = (now: number) => {
+					// 0.15 → 0.1 (round 7, owner: "a little laggy") — still smooths the
+					// coarse touch-scroll quantisation, but the scrub answers the thumb
+					// ~50ms sooner; the buttery target is connectedness, not slowness.
+					const TAU = 0.1
+					const AMBIENT = 360 / 26 // deg/s — the desktop csm-turn rate
+					const KICK = 40 // deg per unit of scrub progress/s
+					const KICK_MAX = 90 // deg/s ceiling on the velocity boost
+					let yaw = 0 // ambient + kick degrees, accrues while visible
+					const loop = (now: number) => {
+						rafId = window.requestAnimationFrame(loop)
 						const dt = Math.min(0.1, (now - lastT) / 1000)
 						lastT = now
+						const prev = cur
 						cur += (target - cur) * (1 - Math.exp(-dt / TAU))
-						if (Math.abs(target - cur) < 0.0004) {
-							cur = target
-							apply(cur)
-							running = false
-							return
-						}
+						if (Math.abs(target - cur) < 0.0004) cur = target
+						const v = dt > 0 ? Math.abs(cur - prev) / dt : 0
+						yaw += (AMBIENT + Math.min(v * KICK, KICK_MAX)) * dt
+						if (yaw > 360) yaw -= 360
 						apply(cur)
-						window.requestAnimationFrame(follow)
+						if (prism) {
+							prism.style.transform =
+								'rotateX(-14deg) rotateY(' + (-32 + yaw).toFixed(2) + 'deg)'
+						}
 					}
+					const start = () => {
+						if (!rafId) {
+							lastT = performance.now()
+							rafId = window.requestAnimationFrame(loop)
+						}
+					}
+					const stop = () => {
+						if (rafId) {
+							window.cancelAnimationFrame(rafId)
+							rafId = 0
+						}
+					}
+					const io = new IntersectionObserver(
+						(entries) => {
+							if (entries.some((e) => e.isIntersecting)) start()
+							else stop()
+						},
+						{ rootMargin: '25% 0px' }
+					)
+					io.observe(monolith)
 					const wake = () => {
 						target = readP()
-						if (!running) {
-							running = true
-							lastT = performance.now()
-							window.requestAnimationFrame(follow)
-						}
 					}
 					window.addEventListener('scroll', wake, { passive: true })
 					const onViewportResize = () => {

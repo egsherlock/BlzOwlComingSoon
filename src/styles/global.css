@@ -81,10 +81,44 @@ body {
 	background: var(--color-background);
 	color: var(--color-foreground);
 	font-family: var(--font-body);
+	/* Pipeline parity with the main repo's <body> (2026-07-10): the main site
+	   sets line-height 1.6 on body, so on the lab page every element that
+	   doesn't declare its own line-height inherited 1.6 — here they were
+	   falling back to the UA's `normal` (~1.2), a real metrics divergence. */
+	line-height: 1.6;
 	/* Font rendering optimizations — the SAME triad the main repo sets on <body>.
 	   grayscale was missing here, so on macOS Firefox this page fell back to
 	   subpixel AA (heavier, fringed) while the main site rendered grayscale. */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
+}
+
+/* Global grain / dither overlay — RENDER-ENVIRONMENT PARITY (2026-07-10).
+   The main repo lays this over EVERY page (labs included), so the CsV13 the
+   owner approved was always viewed under it; the port dropped it, leaving the
+   live page visibly "cleaner/flatter" than the lab — a plausible part of the
+   perceived rendering difference. Ported verbatim from the main global.css:
+   feTurbulence noise at low opacity, `overlay` blend leaves pure blacks and
+   text essentially untouched while dithering banding-prone midtones. */
+:root {
+	--grain-opacity: 0.09;
+}
+body::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	pointer-events: none;
+	opacity: var(--grain-opacity);
+	mix-blend-mode: overlay;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	background-size: 160px 160px;
+	background-repeat: repeat;
+}
+@media (prefers-reduced-motion: reduce) {
+	body::after {
+		/* static anyway, but keep it from being a surprise on low-end setups */
+		--grain-opacity: 0.04;
+	}
 }

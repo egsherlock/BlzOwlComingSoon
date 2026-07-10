@@ -536,6 +536,14 @@ const target = '2026-07-24T17:00:00+01:00'
 		   .pf11-thesis-shine 0.25. */
 		padding-bottom: 0.2em;
 		margin-bottom: -0.2em;
+		/* §3 INLINE headroom (round 8 — "'generic.' loses its period"): trailing
+		   ink isn't only clipped at the mask's FOOT — the −0.045em tracking pulls
+		   the line's advance edge in, so a final '.' whose ink trails past the
+		   inline box edge is sheared by this same overflow clip. Same class as
+		   the services 'under one light.' fix (6cd0cfd .sv6-tline): net-zero
+		   inline pad on the mask. */
+		padding-inline: 0.1em;
+		margin-inline: -0.1em;
 	}
 	.csm-line:last-child .csm-line-ink {
 		background: linear-gradient(
@@ -1375,9 +1383,11 @@ const target = '2026-07-24T17:00:00+01:00'
 					// inside this per-frame-mutated orbit on mobile WebKit, so on THIS
 					// path JS owns the prism's full yaw (CSS animation off via
 					// .csm-scrub-js): an AMBIENT term at the exact desktop rate
-					// (360°/26s) accrues every frame, plus a modest scroll-velocity
-					// kick (capped) so a fling visibly quickens the spin — the same
-					// scrub + ambient composition desktop reads. The loop therefore no
+					// (360°/26s) accrues every frame, plus a VELOCITY-MOMENTUM term
+					// (round 8, owner-ratified): scroll velocity pumps an impulse into
+					// a decaying spin reservoir, so a fling briefly spins the prism
+					// several times faster and EASES back into the ambient rate —
+					// physical momentum, never an instant kick. The loop therefore no
 					// longer parks on convergence; instead an IntersectionObserver
 					// gates it to the monolith being on/near screen (battery: zero
 					// work while zone 2 is away; ambient resumes on approach).
@@ -1392,9 +1402,17 @@ const target = '2026-07-24T17:00:00+01:00'
 					// ~50ms sooner; the buttery target is connectedness, not slowness.
 					const TAU = 0.1
 					const AMBIENT = 360 / 26 // deg/s — the desktop csm-turn rate
-					const KICK = 40 // deg per unit of scrub progress/s
-					const KICK_MAX = 90 // deg/s ceiling on the velocity boost
-					let yaw = 0 // ambient + kick degrees, accrues while visible
+					// Velocity-momentum spin (round 8, owner-ratified — replaces the
+					// instant KICK term): scroll velocity feeds an IMPULSE into a
+					// momentum reservoir (spinVel, deg/s) capped at SPIN_MAX; the
+					// reservoir decays with a SPIN_TAU time-constant. A decisive
+					// full-zone fling briefly reaches ~4–6× the ambient rate, then
+					// eases back into the default spin over ~1.5s.
+					const IMPULSE = 130 // deg/s of spin gained per unit of scrub progress
+					const SPIN_MAX = 140 // deg/s ceiling on the momentum reservoir
+					const SPIN_TAU = 1.4 // s — momentum decay time-constant
+					let spinVel = 0 // deg/s of fling momentum, decays toward 0
+					let yaw = 0 // ambient + momentum degrees, accrues while visible
 					const loop = (now: number) => {
 						rafId = window.requestAnimationFrame(loop)
 						const dt = Math.min(0.1, (now - lastT) / 1000)
@@ -1403,7 +1421,9 @@ const target = '2026-07-24T17:00:00+01:00'
 						cur += (target - cur) * (1 - Math.exp(-dt / TAU))
 						if (Math.abs(target - cur) < 0.0004) cur = target
 						const v = dt > 0 ? Math.abs(cur - prev) / dt : 0
-						yaw += (AMBIENT + Math.min(v * KICK, KICK_MAX)) * dt
+						spinVel = Math.min(spinVel + v * IMPULSE * dt, SPIN_MAX)
+						spinVel *= Math.exp(-dt / SPIN_TAU)
+						yaw += (AMBIENT + spinVel) * dt
 						if (yaw > 360) yaw -= 360
 						apply(cur)
 						if (prism) {

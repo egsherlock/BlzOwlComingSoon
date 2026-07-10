@@ -74,6 +74,10 @@
 html {
 	-webkit-text-size-adjust: 100%;
 	text-size-adjust: 100%;
+	/* Shell parity: NO scroll-behavior:smooth — Lenis owns programmatic
+	   scrolling; the UA smooth-scroller fights it (same rule as the main
+	   repo's global.css). */
+	scroll-behavior: auto;
 }
 body {
 	margin: 0;
@@ -120,5 +124,45 @@ body::after {
 	body::after {
 		/* static anyway, but keep it from being a surprise on low-end setups */
 		--grain-opacity: 0.04;
+	}
+}
+
+/* ---- Shell parity (2026-07-10): the visible pieces of the main repo's
+   global.css that the lab render always had and the port lacked — a visitor
+   must not be able to tell the standalone from the lab. Ported verbatim. ---- */
+
+/* Custom text selection */
+::selection {
+	background: rgb(var(--color-primary-rgb) / 0.3);
+	color: white;
+}
+
+/* Scrollbar styling (desktop WebKit — the default scrollbar was an
+   immediate visual tell against the lab). */
+::-webkit-scrollbar {
+	width: 8px;
+}
+::-webkit-scrollbar-track {
+	background: #1a1a1a;
+}
+::-webkit-scrollbar-thumb {
+	background: #404040;
+	border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+	background: #525252;
+}
+
+/* Accessibility: the main repo's global reduced-motion damper. The page's
+   own RM gates already keep it static; this is the belt-and-braces the lab
+   environment always applied. */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
 	}
 }

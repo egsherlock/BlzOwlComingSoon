@@ -98,6 +98,9 @@
 import '@fontsource-variable/manrope'
 import '@fontsource-variable/bricolage-grotesque'
 import '@fontsource-variable/geist-mono'
+// Lenis structural CSS (html.lenis height/scroll-behavior classes) — shell
+// parity with the main repo's Base.astro, which imports the same file.
+import 'lenis/dist/lenis.css'
 import '../styles/global.css'
 
 const title = 'BlazingOwl — London digital design studio'
@@ -1022,6 +1025,30 @@ const target = '2026-07-24T17:00:00+01:00'
 			.csm:not(.csm-scrub-js) .csm-rev-7 > * {
 				animation-range: cover 32% cover 42%;
 			}
+			/* SETTLE RELEASE (round 9 — resting text must de-composite): a HELD
+			   view-timeline animation keeps its target composited forever, so the
+			   zone-2 text sat on GPU layers at rest and rendered with grayscale AA
+			   (the "not crisp" the owner sees on both venues). Past the completion
+			   point (cover ≥42% — every range above ends ≤42% BY DESIGN, the
+			   round-5 law) the zone script stamps .csm-settled: these rules detach
+			   the animations and hold the EXACT final poses as static styles, so
+			   the text re-rasters crisp. Un-stamping (below 41%) re-attaches the
+			   scrubbed animations — view-timeline pose is pure f(progress), so
+			   re-entry is seamless. The ORBIT + PRISM stay animated: the 3D object
+			   carries no text and must keep turning. */
+			.csm.csm-settled:not(.csm-scrub-js) .csm-stage3d {
+				animation: none;
+				opacity: 1;
+				transform: none;
+			}
+			.csm.csm-settled:not(.csm-scrub-js) .csm-floor {
+				animation: none;
+				transform: translateX(-50%) scaleX(1);
+			}
+			.csm.csm-settled:not(.csm-scrub-js) .csm-rev > * {
+				animation: none;
+				transform: none;
+			}
 			@keyframes csm-orbit {
 				from {
 					transform: rotateX(7deg) rotateY(-150deg);
@@ -1169,11 +1196,43 @@ const target = '2026-07-24T17:00:00+01:00'
 </style>
 
 <script>
+	import Lenis from 'lenis'
+
 	// ── Merged coming-soon: manifesto (zone 1) → monolith (zone 2). ─────────
 	const root = document.querySelector<HTMLElement>('[data-csm]')
 	if (root) {
 		const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 		const allowMotion = !reduce
+
+		// --- Lenis smooth scroll — SHELL PARITY (round 9) --------------------
+		// The lab CsV13 always ran inside the main site's Base shell, whose
+		// site-motion.ts boots Lenis — the standalone had rebuilt only the page,
+		// so the live domain scrolled raw (owner: "we don't have lenis
+		// installed, least scroll doesn't feel like it"). Mirrors site-motion
+		// exactly, minus GSAP (this page has none — Lenis pumps its own rAF):
+		// same duration/easing/smoothWheel. ⚠ THE MOBILE-STICK LAW IS ABSOLUTE
+		// (main-repo post-mortem 2026-07-08): Lenis registers non-passive touch
+		// listeners unconditionally, so TRUE-TOUCH devices ((hover: none) and
+		// (pointer: coarse)) NEVER boot it — native touch scroll stays
+		// untouched, exactly as on the main site. Reduced motion skips it too.
+		const nativeTouch = window.matchMedia(
+			'(hover: none) and (pointer: coarse)'
+		).matches
+		if (allowMotion && !nativeTouch) {
+			const lenis = new Lenis({
+				duration: 1.1,
+				easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+				smoothWheel: true,
+			})
+			// Same global contract as the main site (and a headless-verifiable
+			// marker): programmatic smooth scrolls may go through it.
+			;(window as unknown as { __boLenis?: Lenis }).__boLenis = lenis
+			const pump = (time: number) => {
+				lenis.raf(time)
+				window.requestAnimationFrame(pump)
+			}
+			window.requestAnimationFrame(pump)
+		}
 
 		// --- The one live clock (top-right corner) --------------------------
 		const clock = root.querySelector<HTMLElement>('[data-cs-countdown]')
@@ -1257,9 +1316,21 @@ const target = '2026-07-24T17:00:00+01:00'
 			let ticking = false
 			const syncZone = () => {
 				ticking = false
-				const inZone2 =
-					monolith.getBoundingClientRect().top <= window.innerHeight * 0.5
-				root.dataset.csmZone = inZone2 ? '2' : '1'
+				const rect = monolith.getBoundingClientRect()
+				const vh = window.innerHeight || 1
+				root.dataset.csmZone = rect.top <= vh * 0.5 ? '2' : '1'
+				// SETTLE RELEASE stamp — CSS-timeline path only (round 9; the
+				// JS-scrub loop owns its own stamping + inline-pose release). A HELD
+				// view-timeline animation keeps its target composited forever, so
+				// zone 2's resting text rastered as GPU layers (grayscale AA — the
+				// soft look). Past cover 42% every reveal is complete BY DESIGN (the
+				// round-5 ≤42% law), so .csm-settled may safely detach them; below
+				// 41% (hysteresis) it re-attaches and the reveals scrub again.
+				if (!root.classList.contains('csm-scrub-js')) {
+					const p = (vh - rect.top) / (rect.height + vh)
+					if (p >= 0.42) root.classList.add('csm-settled')
+					else if (p < 0.41) root.classList.remove('csm-settled')
+				}
 			}
 			const onScroll = () => {
 				if (ticking) return
@@ -1319,8 +1390,38 @@ const target = '2026-07-24T17:00:00+01:00'
 					revs.forEach((r) => {
 						r.style.clipPath = 'inset(-0.3em -0.3em -0.1em -0.3em)'
 					})
+					// SETTLE RELEASE (round 9 — resting text must de-composite): while
+					// this loop wrote transforms EVERY frame (the round-6 ambient-prism
+					// change), the text-carrying elements were re-rastered continuously
+					// even when converged — the JS-path twin of the held-view-timeline
+					// softness. Past cover 42% (every reveal complete BY DESIGN — the
+					// round-5 ≤42% law) the loop stops writing to rev/floor/stage3d and
+					// CLEARS their inline poses, so they fall back to static stylesheet
+					// values and re-raster crisp. The ORBIT keeps tracking scroll (its
+					// turn is uncapped) and the PRISM yaw write continues always — the
+					// 3D object carries no text. Below 41% (hysteresis) the poses are
+					// re-imposed and the reveals scrub again.
+					let settled = false
+					const setSettled = (on: boolean) => {
+						if (settled === on) return
+						settled = on
+						root.classList.toggle('csm-settled', on)
+						if (on) {
+							if (stage3d) {
+								stage3d.style.transform = ''
+								stage3d.style.opacity = ''
+							}
+							if (floorEl) floorEl.style.transform = ''
+							revs.forEach((r) => {
+								const child = r.firstElementChild as HTMLElement | null
+								if (child) child.style.transform = ''
+							})
+						}
+					}
 					const apply = (p: number) => {
 						root.style.setProperty('--z2p', p.toFixed(4))
+						if (p >= 0.42) setSettled(true)
+						else if (p < 0.41) setSettled(false)
 						if (orbit) {
 							// CONTINUOUS turntable — mobile parity with desktop's always-live
 							// feel (fix 2026-07-09). The orbit rotation tracks scroll across the
@@ -1341,29 +1442,34 @@ const target = '2026-07-24T17:00:00+01:00'
 							orbit.style.transform =
 								'rotateX(' + ax.toFixed(2) + 'deg) rotateY(' + ay.toFixed(2) + 'deg)'
 						}
-						if (stage3d) {
-							const pr = sub(p, 0.02, 0.3)
-							stage3d.style.opacity = pr.toFixed(3)
-							stage3d.style.transform =
-								'translateY(' +
-								(9 * (1 - pr)).toFixed(2) +
-								'vh) scale(' +
-								(0.9 + 0.1 * pr).toFixed(3) +
-								')'
+						// Text-carrying movers: written only while UN-settled (see the
+						// settle-release note above) — at settle their inline poses are
+						// cleared and they rest as static, de-composited text.
+						if (!settled) {
+							if (stage3d) {
+								const pr = sub(p, 0.02, 0.3)
+								stage3d.style.opacity = pr.toFixed(3)
+								stage3d.style.transform =
+									'translateY(' +
+									(9 * (1 - pr)).toFixed(2) +
+									'vh) scale(' +
+									(0.9 + 0.1 * pr).toFixed(3) +
+									')'
+							}
+							if (floorEl) {
+								const pf = sub(p, 0.08, 0.34)
+								floorEl.style.transform =
+									'translateX(-50%) scaleX(' + pf.toFixed(3) + ')'
+							}
+							revs.forEach((r, i) => {
+								const child = r.firstElementChild as HTMLElement | null
+								if (!child) return
+								const [a, b] = revRanges[i] ?? [0, 1]
+								const pl = sub(p, a, b)
+								child.style.transform =
+									'translateY(' + (130 * (1 - pl)).toFixed(2) + '%)'
+							})
 						}
-						if (floorEl) {
-							const pf = sub(p, 0.08, 0.34)
-							floorEl.style.transform =
-								'translateX(-50%) scaleX(' + pf.toFixed(3) + ')'
-						}
-						revs.forEach((r, i) => {
-							const child = r.firstElementChild as HTMLElement | null
-							if (!child) return
-							const [a, b] = revRanges[i] ?? [0, 1]
-							const pl = sub(p, a, b)
-							child.style.transform =
-								'translateY(' + (130 * (1 - pl)).toFixed(2) + '%)'
-						})
 					}
 					// cover progress: 0 as the monolith top meets the viewport bottom,
 					// 1 as its bottom leaves the viewport top (matches CSS `cover`).
@@ -1395,6 +1501,13 @@ const target = '2026-07-24T17:00:00+01:00'
 					let target = readP()
 					let cur = target
 					apply(cur) // settle the on-load pose instantly — no lerp-in
+					// Converged-skip (round 9): once cur has snapped to target the
+					// scene pose is final — re-calling apply() every frame just wrote
+					// identical values, invalidating style on the root (--z2p) and the
+					// movers each frame and forcing constant text re-raster. Track the
+					// last applied value and only write when it actually changed; the
+					// prism yaw below is the ONLY per-frame write at rest.
+					let lastApplied = cur
 					let rafId = 0
 					let lastT = 0
 					// 0.15 → 0.1 (round 7, owner: "a little laggy") — still smooths the
@@ -1425,7 +1538,10 @@ const target = '2026-07-24T17:00:00+01:00'
 						spinVel *= Math.exp(-dt / SPIN_TAU)
 						yaw += (AMBIENT + spinVel) * dt
 						if (yaw > 360) yaw -= 360
-						apply(cur)
+						if (cur !== lastApplied) {
+							apply(cur)
+							lastApplied = cur
+						}
 						if (prism) {
 							prism.style.transform =
 								'rotateX(-14deg) rotateY(' + (-32 + yaw).toFixed(2) + 'deg)'
@@ -1434,6 +1550,13 @@ const target = '2026-07-24T17:00:00+01:00'
 					const start = () => {
 						if (!rafId) {
 							lastT = performance.now()
+							// Re-sync after a parked stretch (the IO gate): the follower's
+							// cur is stale if the page jumped while zone 2 was away (e.g.
+							// instant back-to-top from the settled bottom, then a return).
+							// Snapping to the live progress is exactly what init does; at
+							// the IO boundary progress is ~0, so no visible discontinuity.
+							target = readP()
+							cur = target
 							rafId = window.requestAnimationFrame(loop)
 						}
 					}
@@ -1442,6 +1565,16 @@ const target = '2026-07-24T17:00:00+01:00'
 							window.cancelAnimationFrame(rafId)
 							rafId = 0
 						}
+						// Final settle-sync AT PARK (round 9): an instant jump away fires
+						// its one scroll event BEFORE this IO callback, while the loop is
+						// still running — so neither the loop (parked next frame, follower
+						// not yet across the threshold) nor wake's parked-sync ever
+						// re-evaluates the stamp, and a settled page jumped back to top
+						// stayed stamped forever (headless catch). The live progress at
+						// park time is the truth — stamp from it.
+						target = readP()
+						if (target >= 0.42) setSettled(true)
+						else if (target < 0.41) setSettled(false)
 					}
 					const io = new IntersectionObserver(
 						(entries) => {
@@ -1453,6 +1586,16 @@ const target = '2026-07-24T17:00:00+01:00'
 					io.observe(monolith)
 					const wake = () => {
 						target = readP()
+						// The loop is IO-gated: while PARKED it can never re-evaluate the
+						// settle threshold, so a fast exit (jump to top while settled)
+						// would leave .csm-settled stamped forever (round-9 headless
+						// catch). Sync the stamp here when parked; the poses themselves
+						// are re-imposed by apply() the moment the IO restarts the loop
+						// on re-approach (25% margin head start, off-screen).
+						if (!rafId) {
+							if (target >= 0.42) setSettled(true)
+							else if (target < 0.41) setSettled(false)
+						}
 					}
 					window.addEventListener('scroll', wake, { passive: true })
 					const onViewportResize = () => {

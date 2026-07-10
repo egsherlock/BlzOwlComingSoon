@@ -975,7 +975,15 @@ const target = '2026-07-24T17:00:00+01:00'
 			.csm:not(.csm-scrub-js) .csm-monolith {
 				view-timeline: --csmz2 block;
 			}
-			.csm:not(.csm-scrub-js) .csm-orbit {
+			/* ROUND 10 — desktop float-drive gate: when Lenis owns the scroll the
+			   script drives the orbit's swing from Lenis's SUB-PIXEL animatedScroll
+			   (via inline transform) instead of this INTEGER-quantized view-timeline,
+			   so a slow scroll no longer stair-steps ~0.19°/px (≈60% of frames stalled,
+			   headless-measured). The script adds .csm-lenis-orbit only on this
+			   view-timeline path AND only once Lenis is live; without Lenis (reduced
+			   motion / true-touch / no shell) the class is never added and this CSS
+			   timeline stays the driver, unchanged. */
+			.csm:not(.csm-scrub-js):not(.csm-lenis-orbit) .csm-orbit {
 				animation: csm-orbit linear both;
 				animation-timeline: --csmz2;
 				animation-range: cover 0% cover 42%;
@@ -1604,6 +1612,83 @@ const target = '2026-07-24T17:00:00+01:00'
 					}
 					window.addEventListener('resize', onViewportResize)
 					window.addEventListener('orientationchange', onViewportResize)
+				}
+
+				// --- DESKTOP FLOAT-DRIVE of the prism swing (round 10) -------------
+				// The block above owns non-view-timeline browsers. HERE is the desktop
+				// / view-timeline path (supportsVT, not forced-JS). Its swing is
+				// normally the pure-CSS `animation-timeline: --csmz2` orbit — but that
+				// samples the INTEGER-rounded native scroll, so a slow scroll stair-
+				// steps the −150°→0° swing ~0.19°/px (≈60% of frames stall, headless-
+				// measured). Lenis smooths scroll VELOCITY, yet the browser still hands
+				// the view-timeline a rounded POSITION. So where Lenis is live we drive
+				// the orbit from its SUB-PIXEL animatedScroll instead, via the SAME
+				// cover-0→42% → −150°→0° mapping the CSS uses (clamped, NO second easing
+				// — it reads an already-smoothed float, so this is not double-smoothing).
+				// .csm-lenis-orbit turns the CSS orbit animation off (the :not() gate in
+				// <style>) so this inline transform wins. Only the ORBIT moves to the
+				// float; every reveal + the settle-release stay on the CSS timeline
+				// exactly as before. No Lenis (RM / true-touch / no shell, or the 2s poll
+				// misses) → the class is never added and the CSS timeline drives
+				// unchanged. Mobile-stick law untouched: this only arms where Lenis
+				// already booted (never on true-touch devices).
+				if (supportsVT && !forceJs) {
+					const orbitEl = root.querySelector<HTMLElement>('.csm-orbit')
+					if (orbitEl) {
+						// Hoisted geometry — measured once + on resize, NEVER per frame
+						// (no getBoundingClientRect in the scroll/rAF path).
+						let monoTop = 0
+						let denom = 1
+						const measure = () => {
+							const r = monolith.getBoundingClientRect()
+							monoTop = r.top + window.scrollY
+							denom = r.height + (window.innerHeight || 1)
+						}
+						const writeOrbit = (scrollF: number) => {
+							// cover progress from the sub-pixel scroll (matches CSS `cover`):
+							// 0 as the monolith top meets the viewport bottom.
+							const cover = ((window.innerHeight || 1) - (monoTop - scrollF)) / denom
+							let po = cover / 0.42
+							po = po < 0 ? 0 : po > 1 ? 1 : po
+							// po capped at 1 === the CSS `both` fill past cover 42%, so the
+							// settled pose is identical to today's; the idle 26s turn on the
+							// child .csm-prism keeps composing on top, untouched.
+							orbitEl.style.transform =
+								'rotateX(' +
+								(7 * (1 - po)).toFixed(3) +
+								'deg) rotateY(' +
+								(-150 * (1 - po)).toFixed(3) +
+								'deg)'
+						}
+						// Lenis may boot AFTER this module (in the lab it lives in the shell
+						// via site-motion.ts; in the standalone __boLenis is already set).
+						// Poll like the ServicesSection __boLenis consumer, self-expiring at
+						// 2s → then the CSS timeline simply stays in charge.
+						const armT0 = performance.now()
+						const arm = () => {
+							const lenis = (
+								window as unknown as {
+									__boLenis?: {
+										on: (e: string, cb: () => void) => void
+										animatedScroll: number
+									}
+								}
+							).__boLenis
+							if (lenis && typeof lenis.on === 'function') {
+								root.classList.add('csm-lenis-orbit')
+								measure()
+								writeOrbit(lenis.animatedScroll)
+								lenis.on('scroll', () => writeOrbit(lenis.animatedScroll))
+								window.addEventListener('resize', () => {
+									measure()
+									writeOrbit(lenis.animatedScroll)
+								})
+								return
+							}
+							if (performance.now() - armT0 < 2000) window.setTimeout(arm, 60)
+						}
+						arm()
+					}
 				}
 
 				let userEngaged = false

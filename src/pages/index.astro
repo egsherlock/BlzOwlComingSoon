@@ -1059,7 +1059,7 @@ const target = '2026-07-24T17:00:00+01:00'
 			}
 			@keyframes csm-orbit {
 				from {
-					transform: rotateX(7deg) rotateY(-150deg);
+					transform: rotateX(5.4deg) rotateY(-115deg);
 				}
 				to {
 					transform: rotateX(0deg) rotateY(0deg);
@@ -1445,8 +1445,8 @@ const target = '2026-07-24T17:00:00+01:00'
 							// JS-owned on this path — ambient + kick in the loop below — the
 							// CSS 26s idle turn is off via .csm-scrub-js.)
 							const po = Math.max(0, p / 0.42)
-							const ax = 7 * (1 - Math.min(1, po))
-							const ay = -150 * (1 - po)
+							const ax = 5.4 * (1 - Math.min(1, po))
+							const ay = -115 * (1 - po)
 							orbit.style.transform =
 								'rotateX(' + ax.toFixed(2) + 'deg) rotateY(' + ay.toFixed(2) + 'deg)'
 						}
@@ -1529,8 +1529,8 @@ const target = '2026-07-24T17:00:00+01:00'
 					// reservoir decays with a SPIN_TAU time-constant. A decisive
 					// full-zone fling briefly reaches ~4–6× the ambient rate, then
 					// eases back into the default spin over ~1.5s.
-					const IMPULSE = 130 // deg/s of spin gained per unit of scrub progress
-					const SPIN_MAX = 140 // deg/s ceiling on the momentum reservoir
+					const IMPULSE = 100 // deg/s of spin gained per unit of scrub progress
+					const SPIN_MAX = 108 // deg/s ceiling on the momentum reservoir
 					const SPIN_TAU = 1.4 // s — momentum decay time-constant
 					let spinVel = 0 // deg/s of fling momentum, decays toward 0
 					let yaw = 0 // ambient + momentum degrees, accrues while visible
@@ -1655,9 +1655,9 @@ const target = '2026-07-24T17:00:00+01:00'
 							// child .csm-prism keeps composing on top, untouched.
 							orbitEl.style.transform =
 								'rotateX(' +
-								(7 * (1 - po)).toFixed(3) +
+								(5.4 * (1 - po)).toFixed(3) +
 								'deg) rotateY(' +
-								(-150 * (1 - po)).toFixed(3) +
+								(-115 * (1 - po)).toFixed(3) +
 								'deg)'
 						}
 						// Lenis may boot AFTER this module (in the lab it lives in the shell

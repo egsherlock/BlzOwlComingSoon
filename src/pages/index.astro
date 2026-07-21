@@ -115,7 +115,7 @@ const statements = [
 	['Design that earns awe —', 'then proves it', 'in the numbers.'],
 	['The studio is open —', 'the new site', 'is nearly here.'],
 ]
-const target = '2026-07-24T17:00:00+01:00'
+const target = '2026-07-31T18:00:00+01:00'
 ---
 
 <!doctype html>
@@ -178,7 +178,7 @@ const target = '2026-07-24T17:00:00+01:00'
 	}
 	{/* The live countdown — the ONLY clock. Zone-1 register; hides in zone 2. */}
 	<p class="csm-clock" data-cs-countdown data-cs-target={target}>
-		<span class="csm-clock-static">Launching 24.07.2026</span>
+		<span class="csm-clock-static">Launching 31.07.2026</span>
 		<span class="csm-clock-live" aria-hidden="true">
 			Launch <b data-unit="days">14</b>d
 			<b data-unit="hours">00</b>h
@@ -380,7 +380,7 @@ const target = '2026-07-24T17:00:00+01:00'
 				</p>
 			</div>
 			<div class="csm-rev csm-rev-3">
-				<h1 id="csm-mo-title" class="csm-title">The new site lands 24.07.</h1>
+				<h1 id="csm-mo-title" class="csm-title">The new site lands 31.07.</h1>
 			</div>
 			<div class="csm-rev csm-rev-4">
 				<p class="csm-lede">
@@ -390,7 +390,7 @@ const target = '2026-07-24T17:00:00+01:00'
 			</div>
 			<div class="csm-rev csm-rev-5">
 				<p class="csm-datum">
-					Launch · <time datetime="2026-07-24">24.07.2026</time>
+					Launch · <time datetime="2026-07-31">31.07.2026</time>
 				</p>
 			</div>
 			<div class="csm-rev csm-rev-6">
@@ -1246,7 +1246,7 @@ const target = '2026-07-24T17:00:00+01:00'
 		const clock = root.querySelector<HTMLElement>('[data-cs-countdown]')
 		if (clock) {
 			const t = new Date(
-				clock.dataset.csTarget ?? '2026-07-24T17:00:00+01:00'
+				clock.dataset.csTarget ?? '2026-07-31T18:00:00+01:00'
 			).getTime()
 			const set = (unit: string, val: number) => {
 				const el = clock.querySelector<HTMLElement>(`[data-unit="${unit}"]`)
